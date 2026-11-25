@@ -275,3 +275,14 @@
 
 .card-invert > .dropzone { height: 100%; }
 .card-invert { display: flex; flex-direction: column; }
+
+/* ---------- Footer y documentos ---------- */
+.footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 6px 4px; border-top: 1px solid var(--border); margin-top: 8px; font-size: 13px; color: var(--text-muted); }
+.footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+.footer a:hover { color: var(--text); }
+.doc h2 { font-size: 18px; margin: 22px 0 8px; }
+.doc h2:first-child { margin-top: 0; }
+.doc p { color: var(--text-muted); margin-bottom: 10px; line-height: 1.7; }
+.doc a { text-decoration: underline; color: var(--text); }
+.doc .btn { text-decoration: none; }
+.seo-static { padding: 24px; color: #f4f4f2; font-family: Urbanist, system-ui, sans-serif; }

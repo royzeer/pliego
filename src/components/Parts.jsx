@@ -2,6 +2,7 @@ import { useState } from "react";
 import Icon from "./Icon";
 import { formatSize } from "../lib/files";
 import { ENGINE_LABEL, FREE_LIMITS } from "../data/tools";
+import { getGuide } from "../data/guides";
 
 /** Lista de archivos que se puede reordenar arrastrando. */
 export function FileList({ files, setFiles, sortable }) {
@@ -149,16 +150,22 @@ export function AdSlot() {
 
 export function Guide({ tool }) {
   const limit = tool.limitFree || `${FREE_LIMITS.maxFileMB} MB por archivo`;
+  const g = getGuide(tool.id);
+  const steps = g?.steps || [
+    "Sube tu archivo arrastrándolo o haciendo clic en el recuadro.",
+    "Ajusta las opciones del panel.",
+    "Haz clic en el botón principal y descarga el resultado.",
+  ];
   return (
     <section className="guide">
       <div className="card">
         <h2>Cómo usar {tool.name}</h2>
-        <ol>
-          <li>Sube tu archivo arrastrándolo o haciendo clic en el recuadro.</li>
-          <li>Ajusta las opciones del panel de la derecha.</li>
-          <li>Haz clic en el botón principal y descarga el resultado.</li>
-        </ol>
+        {g?.intro && <p className="muted" style={{ marginBottom: 14 }}>{g.intro}</p>}
+        <ol>{steps.map((s) => <li key={s}>{s}</li>)}</ol>
         <div className="faq" style={{ marginTop: 18 }}>
+          {(g?.faqs || []).map(([q, a]) => (
+            <details key={q}><summary>{q}</summary><p>{a}</p></details>
+          ))}
           <details>
             <summary>¿Es gratis y sin límite de usos?</summary>
             <p>Sí. Puedes usar {tool.name} las veces que quieras. En el plan gratis el límite es por archivo: {limit}.</p>

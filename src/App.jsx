@@ -6,6 +6,7 @@ import Tools from "./pages/Tools";
 import Tramites from "./pages/Tramites";
 import Planes from "./pages/Planes";
 import NotFound from "./pages/NotFound";
+import { Acerca, Contacto, Privacidad, Terminos } from "./pages/Legal";
 
 // Las herramientas cargan las librerías de PDF solo cuando se abren.
 const ToolPage = lazy(() => import("./pages/ToolPage"));
@@ -21,6 +22,10 @@ export default function App() {
           <Route path="/herramientas/:id" element={<Suspense fallback={<Loading />}><ToolPage /></Suspense>} />
           <Route path="/tramites" element={<Tramites />} />
           <Route path="/planes" element={<Planes />} />
+          <Route path="/acerca" element={<Acerca />} />
+          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/privacidad" element={<Privacidad />} />
+          <Route path="/terminos" element={<Terminos />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

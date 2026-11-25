@@ -102,6 +102,16 @@ export default function Layout() {
         </nav>
         <main className="main">
           <Outlet />
+          <footer className="footer">
+            <span>© {new Date().getFullYear()} Pliego · Tus archivos se procesan en tu dispositivo</span>
+            <nav>
+              <Link to="/herramientas">Herramientas</Link>
+              <Link to="/acerca">Acerca de</Link>
+              <Link to="/contacto">Contacto</Link>
+              <Link to="/privacidad">Privacidad</Link>
+              <Link to="/terminos">Términos</Link>
+            </nav>
+          </footer>
         </main>
       </div>
     </div>

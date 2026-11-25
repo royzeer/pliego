@@ -1,5 +1,7 @@
 # Pliego
 
+Sitio: https://pliego.lat
+
 Herramientas PDF gratis y sin límite de usos, pensadas para los trámites en Colombia.
 Casi todo se procesa dentro del navegador: los archivos nunca salen del dispositivo del usuario.
 
@@ -66,6 +68,12 @@ Se usa Cloudflare porque su plan gratis permite uso comercial (anuncios y planes
 5. Guarda y publica. Cada vez que subas cambios a GitHub, el sitio se actualiza solo.
 
 Cuando AdSense apruebe el sitio, agrega las variables `VITE_ADSENSE_CLIENT` y `VITE_ADSENSE_SLOT` en la configuración del proyecto en Cloudflare (o en un archivo `.env` a partir de `.env.example`).
+
+## Preparado para Google
+
+Al compilar (`npm run build`), el script `scripts/prerender.mjs` genera una página HTML por cada ruta (54 en total) con su título, descripción, dirección canónica, datos estructurados (schema.org) y el texto de la guía. También crea `sitemap.xml` y `robots.txt`. Así los buscadores leen cada página sin ejecutar JavaScript.
+
+Las guías de cada herramienta están en `src/data/guides.js` y los datos del sitio en `src/data/site.js`.
 
 ## Estructura
 
