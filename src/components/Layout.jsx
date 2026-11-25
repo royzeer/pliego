@@ -9,6 +9,7 @@ const NAV = [
   { to: "/", icon: "IconHome", label: "Inicio", end: true },
   { to: "/herramientas", icon: "IconLayoutGrid", label: "Herramientas" },
   { to: "/tramites", icon: "IconId", label: "Trámites" },
+  { to: "/guias", icon: "IconBook", label: "Guías" },
   { to: "/planes", icon: "IconCrown", label: "Planes" },
 ];
 
@@ -108,6 +109,7 @@ export default function Layout() {
             <span>© {new Date().getFullYear()} Pliego · Tus archivos se procesan en tu dispositivo</span>
             <nav>
               <Link to="/herramientas">Herramientas</Link>
+              <Link to="/guias">Guías</Link>
               <Link to="/instalar">Instalar app</Link>
               <Link to="/acerca">Acerca de</Link>
               <Link to="/contacto">Contacto</Link>

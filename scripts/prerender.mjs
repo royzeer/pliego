@@ -6,6 +6,13 @@ import path from "node:path";
 import { TOOLS, CATEGORIES } from "../src/data/tools.js";
 import { GUIDES } from "../src/data/guides.js";
 import { SITE, PAGES } from "../src/data/site.js";
+import { ARTICLES } from "../src/data/articles/index.js";
+import { GUIDE_SLUGS } from "../src/data/guideSlugs.js";
+
+// Comprueba que el mapa herramienta -> guía esté al día.
+for (const a of ARTICLES) {
+  if (GUIDE_SLUGS[a.tool] !== a.slug) throw new Error(`guideSlugs.js desactualizado para ${a.tool}`);
+}
 
 const DIST = path.resolve("dist");
 const template = fs.readFileSync(path.join(DIST, "index.html"), "utf8");
@@ -45,7 +52,7 @@ function render(route, { title, description, body, jsonld }) {
 }
 
 const toolList = (tools) => `<ul>${tools.map((t) => `<li>${link(toolUrl(t), t.name)}: ${esc(t.desc)}</li>`).join("")}</ul>`;
-const nav = `<p>${link("/", "Inicio")} · ${link("/herramientas", "Herramientas")} · ${link("/tramites", "Trámites")} · ${link("/planes", "Planes")}</p>`;
+const nav = `<p>${link("/", "Inicio")} · ${link("/herramientas", "Herramientas")} · ${link("/tramites", "Trámites")} · ${link("/guias", "Guías")} · ${link("/planes", "Planes")}</p>`;
 const footer = `<p>${link("/acerca", "Acerca de")} · ${link("/contacto", "Contacto")} · ${link("/privacidad", "Privacidad")} · ${link("/terminos", "Términos")}</p>`;
 
 const urls = [];
@@ -59,6 +66,14 @@ for (const p of PAGES) {
       .join("");
   }
   if (p.path === "/tramites") extra = toolList(TOOLS.filter((t) => t.cat === "tramites"));
+  if (p.path === "/guias") {
+    extra = CATEGORIES.filter((c) => c.id !== "todas")
+      .map((c) => {
+        const items = ARTICLES.filter((a) => TOOLS.find((t) => t.id === a.tool)?.cat === c.id);
+        return items.length ? `<h2>${esc(c.name)}</h2><ul>${items.map((a) => `<li>${link(`/guias/${a.slug}`, a.title)}: ${esc(a.description)}</li>`).join("")}</ul>` : "";
+      })
+      .join("");
+  }
   const jsonld = p.path === "/"
     ? { "@context": "https://schema.org", "@type": "WebSite", name: SITE.name, url: SITE.url + "/", description: SITE.description, inLanguage: "es" }
     : undefined;
@@ -78,6 +93,7 @@ for (const t of TOOLS) {
     g?.intro ? `<p>${esc(g.intro)}</p>` : "",
     g?.steps ? `<h2>Cómo usar ${esc(t.name)}</h2><ol>${g.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : "",
     g?.faqs?.length ? `<h2>Preguntas frecuentes</h2>${g.faqs.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("")}` : "",
+    GUIDE_SLUGS[t.id] ? `<p>${link(`/guias/${GUIDE_SLUGS[t.id]}`, "Leer la guía completa")}</p>` : "",
     related.length ? `<h2>Herramientas relacionadas</h2>${toolList(related)}` : "",
     footer,
   ].join("");
@@ -102,6 +118,58 @@ for (const t of TOOLS) {
     });
   }
   urls.push({ url: render(toolUrl(t), { title: `${t.name} gratis y sin límite — ${SITE.name}`, description, body, jsonld }), priority: t.status === "listo" ? "0.8" : "0.3" });
+}
+
+// Una página por guía
+const ul = (items, tag = "ul") => `<${tag}>${items.map((x) => `<li>${esc(x)}</li>`).join("")}</${tag}>`;
+for (const a of ARTICLES) {
+  const t = TOOLS.find((x) => x.id === a.tool);
+  const route = `/guias/${a.slug}`;
+  const url = `${SITE.url}${route}`;
+  const body = [
+    nav,
+    `<p>${link("/guias", "Guías")} › ${esc(t.name)}</p>`,
+    `<h1>${esc(a.title)}</h1>`,
+    a.intro.map((p) => `<p>${esc(p)}</p>`).join(""),
+    `<p>${link(toolUrl(t), `Abrir ${t.name}`)}</p>`,
+    `<h2>Cuándo te sirve</h2>${ul(a.when)}`,
+    `<h2>Paso a paso</h2>${ul(a.steps, "ol")}`,
+    (a.sections || []).map((s) => `<h2>${esc(s.h)}</h2>${(s.p || []).map((p) => `<p>${esc(p)}</p>`).join("")}${s.list ? ul(s.list) : ""}`).join(""),
+    `<h2>Consejos</h2>${ul(a.tips)}`,
+    a.faqs?.length ? `<h2>Preguntas frecuentes</h2>${a.faqs.map(([q, r]) => `<h3>${esc(q)}</h3><p>${esc(r)}</p>`).join("")}` : "",
+    footer,
+  ].join("");
+  const jsonld = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: a.title,
+      description: a.description,
+      inLanguage: "es",
+      url,
+      mainEntityOfPage: url,
+      dateModified: today,
+      author: { "@type": "Person", name: SITE.owner },
+      publisher: { "@type": "Organization", name: SITE.name, url: SITE.url + "/" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Inicio", item: SITE.url + "/" },
+        { "@type": "ListItem", position: 2, name: "Guías", item: `${SITE.url}/guias` },
+        { "@type": "ListItem", position: 3, name: a.title, item: url },
+      ],
+    },
+  ];
+  if (a.faqs?.length) {
+    jsonld.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: a.faqs.map(([q, r]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: r } })),
+    });
+  }
+  urls.push({ url: render(route, { title: `${a.title} — ${SITE.name}`, description: a.description, body, jsonld }), priority: "0.7" });
 }
 
 // Sitemap y robots

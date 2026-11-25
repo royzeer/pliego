@@ -2,6 +2,7 @@
 import {
   IconAlertTriangle,
   IconArchive,
+  IconBook,
   IconArrowLeft,
   IconArrowUpRight,
   IconArrowsShuffle,
@@ -79,6 +80,7 @@ import {
 const MAP = {
   IconAlertTriangle,
   IconArchive,
+  IconBook,
   IconArrowLeft,
   IconArrowUpRight,
   IconArrowsShuffle,

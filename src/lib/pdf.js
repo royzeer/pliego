@@ -448,7 +448,7 @@ export async function extractText(file, _opts, onProgress) {
   }
   await closePdf(doc);
   if (!out.replace(/--- Página \d+ ---/g, "").trim()) {
-    throw new Error("Este PDF no tiene texto (parece escaneado). Pronto podrás usar OCR para leerlo.");
+    throw new Error("Este PDF no tiene texto (parece escaneado). Usa OCR PDF para leerlo.");
   }
   return { blob: new Blob([out], { type: "text/plain;charset=utf-8" }), name: `${baseName(file.name)}.txt` };
 }

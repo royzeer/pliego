@@ -15,6 +15,7 @@ export const SITE = {
 export const PAGES = [
   { path: "/", title: "Pliego — Herramientas PDF gratis para tus trámites", description: SITE.description, h1: "Tus documentos listos para cualquier trámite" },
   { path: "/herramientas", title: "Todas las herramientas PDF gratis — Pliego", description: "Más de 40 herramientas para unir, dividir, comprimir, convertir, rotar, numerar y proteger PDF. Gratis, sin registro y sin límite de usos.", h1: "Herramientas PDF" },
+  { path: "/guias", title: "Guías paso a paso para tus PDF y trámites — Pliego", description: "Guías para unir, comprimir, convertir, firmar y proteger PDF, y para trámites en Colombia: cuenta de cobro, derecho de petición, liquidación y más.", h1: "Guías" },
   { path: "/tramites", title: "Documentos listos para trámites en Colombia — Pliego", description: "Cédula por ambas caras, PDF de máximo 1 o 2 MB, paquete de hoja de vida y revisor antes de subir. Deja tus documentos como los piden las plataformas.", h1: "Trámites" },
   { path: "/planes", title: "Planes — Pliego", description: "Pliego es gratis y sin límite de usos. El plan Pro es para archivos grandes, trabajo en lote y sin anuncios.", h1: "Planes" },
   { path: "/instalar", title: "Instalar Pliego en Android, iPhone y computador", description: "Instala Pliego como app en tu celular o computador: se abre en pantalla completa, sin barra del navegador, y funciona sin internet. Gratis.", h1: "Instala Pliego en tu celular" },

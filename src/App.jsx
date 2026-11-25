@@ -11,6 +11,8 @@ import Instalar from "./pages/Instalar";
 
 // Las herramientas cargan las librerías de PDF solo cuando se abren.
 const ToolPage = lazy(() => import("./pages/ToolPage"));
+const GuiasIndex = lazy(() => import("./pages/Guias").then((m) => ({ default: m.GuiasIndex })));
+const GuiaPage = lazy(() => import("./pages/Guias").then((m) => ({ default: m.GuiaPage })));
 const Loading = () => <div className="card muted">Cargando herramienta…</div>;
 
 export default function App() {
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/herramientas" element={<Tools />} />
           <Route path="/herramientas/:id" element={<Suspense fallback={<Loading />}><ToolPage /></Suspense>} />
+          <Route path="/guias" element={<Suspense fallback={<Loading />}><GuiasIndex /></Suspense>} />
+          <Route path="/guias/:slug" element={<Suspense fallback={<Loading />}><GuiaPage /></Suspense>} />
           <Route path="/tramites" element={<Tramites />} />
           <Route path="/planes" element={<Planes />} />
           <Route path="/instalar" element={<Instalar />} />

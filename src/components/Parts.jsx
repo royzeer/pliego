@@ -3,6 +3,8 @@ import Icon from "./Icon";
 import { formatSize } from "../lib/files";
 import { ENGINE_LABEL, FREE_LIMITS } from "../data/tools";
 import { getGuide } from "../data/guides";
+import { GUIDE_SLUGS } from "../data/guideSlugs";
+import { Link } from "react-router-dom";
 
 /** Lista de archivos que se puede reordenar arrastrando. */
 export function FileList({ files, setFiles, sortable }) {
@@ -166,6 +168,11 @@ export function Guide({ tool }) {
         <h2>Cómo usar {tool.name}</h2>
         {g?.intro && <p className="muted" style={{ marginBottom: 14 }}>{g.intro}</p>}
         <ol>{steps.map((s) => <li key={s}>{s}</li>)}</ol>
+        {GUIDE_SLUGS[tool.id] && (
+          <p style={{ marginTop: 14 }}>
+            <Link to={`/guias/${GUIDE_SLUGS[tool.id]}`} className="btn"><Icon name="IconBook" size={16} /> Leer la guía completa</Link>
+          </p>
+        )}
         <div className="faq" style={{ marginTop: 18 }}>
           {(g?.faqs || []).map(([q, a]) => (
             <details key={q}><summary>{q}</summary><p>{a}</p></details>
