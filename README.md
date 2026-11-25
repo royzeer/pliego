@@ -53,15 +53,20 @@ Para generar la versión final:
 npm run build
 ```
 
-## Publicarlo
+## Publicarlo (Cloudflare Pages, gratis)
 
-El proyecto está listo para Vercel (el archivo `vercel.json` hace que todas las rutas funcionen).
+Se usa Cloudflare Pages porque su plan gratis permite uso comercial (anuncios y planes de pago) y no cobra por tráfico.
 
-1. Entra a vercel.com con tu cuenta de GitHub.
-2. Importa el repositorio `pliego`.
-3. Deja la configuración por defecto (Vite) y publica.
+1. Entra a dash.cloudflare.com y crea una cuenta.
+2. Ve a Workers y Pages, luego Crear, pestaña Pages, y elige Conectar con Git.
+3. Autoriza GitHub y elige el repositorio `pliego`.
+4. Configuración de compilación:
+   - Framework: React (Vite)
+   - Comando de compilación: `npm run build`
+   - Carpeta de salida: `dist`
+5. Guarda y publica. Cada vez que subas cambios a GitHub, el sitio se actualiza solo.
 
-Cuando AdSense apruebe el sitio, crea un archivo `.env` a partir de `.env.example` (o agrega las variables en Vercel) y pega tu código de cliente y de bloque de anuncio.
+Cuando AdSense apruebe el sitio, agrega las variables `VITE_ADSENSE_CLIENT` y `VITE_ADSENSE_SLOT` en la configuración del proyecto en Cloudflare (o en un archivo `.env` a partir de `.env.example`).
 
 ## Estructura
 
