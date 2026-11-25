@@ -2,7 +2,7 @@
 export const SITE = {
   name: "Pliego",
   url: "https://pliego.lat",
-  email: "stebanc1703@gmail.com",
+  email: "hola@pliego.lat",
   owner: "Roycer Cervantes",
   city: "Santa Marta, Colombia",
   tagline: "Herramientas PDF gratis y sin límite de usos, pensadas para tus trámites",

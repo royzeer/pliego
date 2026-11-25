@@ -42,7 +42,7 @@ export default function Planes() {
             <h2 style={{ fontSize: 18 }}>{p.name}</h2>
             <div><div className="price">{p.price}</div><div className="small" style={{ opacity: 0.6 }}>{p.period}</div></div>
             <ul>{p.items.map((i) => <li key={i}><Icon name="IconCheck" size={16} style={{ flexShrink: 0, marginTop: 3 }} />{i}</li>)}</ul>
-            <a href={p.href || "mailto:stebanc1703@gmail.com?subject=Quiero%20Pliego%20Pro"} className={`btn ${p.invert ? "" : "btn-primary"}`} style={{ marginTop: "auto", ...(p.invert ? { background: "var(--invert-text)", color: "var(--invert-bg)" } : {}) }}>{p.cta}</a>
+            <a href={p.href || "mailto:hola@pliego.lat?subject=Quiero%20Pliego%20Pro"} className={`btn ${p.invert ? "" : "btn-primary"}`} style={{ marginTop: "auto", ...(p.invert ? { background: "var(--invert-text)", color: "var(--invert-bg)" } : {}) }}>{p.cta}</a>
           </section>
         ))}
       </div>
