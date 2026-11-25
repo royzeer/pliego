@@ -176,7 +176,7 @@ export function Guide({ tool }) {
           </details>
           <details>
             <summary>¿Mis archivos se suben a internet?</summary>
-            <p>{tool.engine === "navegador" ? "No. Esta herramienta trabaja dentro de tu navegador: el archivo nunca sale de tu dispositivo." : "Esta herramienta necesita el servidor de Pliego. El archivo se borra apenas termina el proceso."}</p>
+            <p>{tool.engine === "navegador" ? "No. Esta herramienta trabaja dentro de tu navegador: el archivo nunca sale de tu dispositivo." : "El archivo no se sube. Pliego saca el texto en tu dispositivo y solo ese texto se envía a la IA de Cloudflare para procesarlo; no se guarda."}</p>
           </details>
           <details>
             <summary>¿Funciona en el celular?</summary>

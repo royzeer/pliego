@@ -226,6 +226,21 @@ export const GUIDES = {
     steps: ["Sube el archivo .html o pega el código en el panel.", "Elige el tamaño de hoja.", "Haz clic en Convertir a PDF."],
     faqs: [["¿Puedo convertir una página web con su enlace?", "Abre la página en tu navegador, elige Imprimir y luego Guardar como PDF."]],
   },
+  "resumir-pdf": {
+    intro: "Resume documentos largos en segundos: lecturas de clase, contratos, informes o normas. Pliego te da un resumen corto y los puntos clave, con fechas y valores importantes.",
+    steps: ["Sube tu PDF (con texto, no escaneado).", "Haz clic en Resumir.", "Copia el resumen o descárgalo en Word."],
+    faqs: [["¿Hay límite?", "El plan gratis resume documentos de hasta 20 páginas, sin límite de usos. Si la IA gratis del día se agota, vuelve a intentarlo al día siguiente."]],
+  },
+  "traducir-pdf": {
+    intro: "Traduce el texto de un PDF a español, inglés, portugués, francés, italiano o alemán, página por página, y descárgalo en Word para revisarlo.",
+    steps: ["Sube tu PDF.", "Elige el idioma.", "Haz clic en Traducir y espera a que termine cada parte.", "Descarga la traducción en Word."],
+    faqs: [["¿Se conserva el diseño?", "Se conserva el texto y su orden por páginas, no el diseño gráfico del PDF."]],
+  },
+  "chat-pdf": {
+    intro: "Hazle preguntas a un documento como si hablaras con alguien que ya lo leyó: qué fechas hay, cuánto hay que pagar, qué requisitos piden o de qué trata una parte.",
+    steps: ["Sube tu PDF.", "Escribe tu pregunta o toca una de las sugeridas.", "Sigue preguntando lo que necesites."],
+    faqs: [["¿Puede inventar respuestas?", "Le pedimos que responda solo con lo que dice el documento, pero la IA puede equivocarse. Verifica los datos importantes en el PDF."]],
+  },
 };
 
 export const getGuide = (id) => GUIDES[id];

@@ -59,7 +59,7 @@ export function Privacidad() {
 
         <h2>2. Tus archivos</h2>
         <p>Las herramientas marcadas como "Se procesa en tu dispositivo" trabajan dentro de tu navegador. Tus archivos no se envían, no se guardan y no se pueden ver desde nuestros servidores. Cuando cierras la página, desaparecen de la memoria del navegador.</p>
-        <p>Si en el futuro alguna herramienta necesita procesar el archivo en un servidor (por ejemplo, Word a PDF), lo indicará claramente antes de usarla, y el archivo se borrará apenas termine el proceso.</p>
+        <p>Las herramientas de inteligencia artificial (Resumir, Traducir y Pregúntale al PDF) tampoco suben tu archivo: Pliego saca el texto en tu dispositivo y solo ese texto se envía a Workers AI de Cloudflare para generar la respuesta. Pliego no guarda ese texto ni las respuestas.</p>
 
         <h2>3. Datos que se guardan en tu navegador</h2>
         <p>Pliego guarda en el almacenamiento local de tu navegador (localStorage) datos que nunca salen de tu dispositivo: el tema claro u oscuro, las herramientas que usaste hace poco y estadísticas de uso como el número de archivos procesados. Puedes borrarlos cuando quieras desde la configuración de tu navegador.</p>

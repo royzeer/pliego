@@ -73,17 +73,16 @@ export const TOOLS = [
   { id: "comparar-pdf", name: "Comparar PDF", desc: "Ve qué cambió entre dos versiones.", cat: "seguridad", icon: "IconGitCompare", status: "listo", engine: "navegador" },
 
   // ---------- IA ----------
-  { id: "resumir-pdf", name: "Resumir con IA", desc: "Las ideas clave en segundos.", cat: "ia", icon: "IconSparkles", status: "pronto", engine: "ia", limitFree: "20 páginas por archivo" },
-  { id: "traducir-pdf", name: "Traducir PDF", desc: "A inglés, español y más.", cat: "ia", icon: "IconLanguage", status: "pronto", engine: "ia", limitFree: "20 páginas por archivo" },
-  { id: "chat-pdf", name: "Pregúntale al PDF", desc: "Haz preguntas sobre el documento.", cat: "ia", icon: "IconMessageQuestion", status: "pronto", engine: "ia", limitFree: "20 páginas por archivo" },
+  { id: "resumir-pdf", name: "Resumir con IA", desc: "Las ideas clave en segundos.", cat: "ia", icon: "IconSparkles", status: "listo", engine: "ia", limitFree: "20 páginas por archivo" },
+  { id: "traducir-pdf", name: "Traducir PDF", desc: "A español, inglés, portugués y más.", cat: "ia", icon: "IconLanguage", status: "listo", engine: "ia", limitFree: "20 páginas por archivo" },
+  { id: "chat-pdf", name: "Pregúntale al PDF", desc: "Haz preguntas sobre el documento.", cat: "ia", icon: "IconMessageQuestion", status: "listo", engine: "ia", limitFree: "20 páginas por archivo" },
 ];
 
 export const getTool = (id) => TOOLS.find((t) => t.id === id);
 
 export const ENGINE_LABEL = {
   navegador: "Se procesa en tu dispositivo",
-  servidor: "Se procesa en el servidor de Pliego",
-  ia: "Usa inteligencia artificial",
+  ia: "Solo el texto se procesa con IA de Cloudflare",
 };
 
 // Límites del plan gratis. El uso siempre es ilimitado; solo se limita el tamaño de cada archivo.
@@ -93,6 +92,7 @@ export const FREE_LIMITS = {
   markdownPages: 50,
   ocrPages: 30,
   convertPages: 50,
+  aiPages: 20,
 };
 
 export const TRAMITES = [
