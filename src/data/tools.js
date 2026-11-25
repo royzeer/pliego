@@ -20,9 +20,9 @@ export const TOOLS = [
   { id: "comprimir-a-peso", name: "Comprimir a peso exacto", desc: "Dile el máximo (1 MB, 2 MB…) y Pliego lo logra.", cat: "tramites", icon: "IconTargetArrow", status: "listo", engine: "navegador", exclusive: true },
   { id: "paquete-documentos", name: "Paquete de documentos", desc: "Hoja de vida, cédula y certificados en un solo PDF.", cat: "tramites", icon: "IconBriefcase", status: "listo", engine: "navegador", exclusive: true },
   { id: "revisor", name: "Revisor antes de subir", desc: "Detecta peso, contraseña, páginas giradas o en blanco.", cat: "tramites", icon: "IconChecklist", status: "listo", engine: "navegador", exclusive: true },
-  { id: "cuenta-de-cobro", name: "Cuenta de cobro", desc: "Llena el formulario y descarga el PDF.", cat: "tramites", icon: "IconReceipt", status: "pronto", engine: "navegador", exclusive: true },
-  { id: "derecho-de-peticion", name: "Derecho de petición", desc: "Plantilla lista para radicar.", cat: "tramites", icon: "IconGavel", status: "pronto", engine: "navegador", exclusive: true },
-  { id: "liquidacion", name: "Calculadora de liquidación", desc: "Prima, cesantías y vacaciones en PDF.", cat: "tramites", icon: "IconCalculator", status: "pronto", engine: "navegador", exclusive: true },
+  { id: "cuenta-de-cobro", name: "Cuenta de cobro", desc: "Llena el formulario y descarga el PDF.", cat: "tramites", icon: "IconReceipt", status: "listo", engine: "navegador", exclusive: true },
+  { id: "derecho-de-peticion", name: "Derecho de petición", desc: "Plantilla lista para radicar.", cat: "tramites", icon: "IconGavel", status: "listo", engine: "navegador", exclusive: true },
+  { id: "liquidacion", name: "Calculadora de liquidación", desc: "Cesantías, intereses, prima y vacaciones con valores 2026.", cat: "tramites", icon: "IconCalculator", status: "listo", engine: "navegador", exclusive: true },
 
   // ---------- Organizar ----------
   { id: "unir-pdf", name: "Unir PDF", desc: "Junta varios PDF en el orden que quieras.", cat: "organizar", icon: "IconFiles", status: "listo", engine: "navegador" },

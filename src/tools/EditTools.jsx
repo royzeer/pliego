@@ -79,7 +79,7 @@ const photoToSignature = async (file) => {
   return trimCanvas(c);
 };
 
-function SignatureMaker({ onCreate }) {
+export function SignatureMaker({ onCreate }) {
   const [mode, setMode] = useState("dibujar");
   const [name, setName] = useState("");
   const [color, setColor] = useState("#111827");

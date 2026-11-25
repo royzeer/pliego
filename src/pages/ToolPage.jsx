@@ -7,8 +7,9 @@ import { getTool } from "../data/tools";
 import { REGISTRY } from "../tools/registry";
 import { CUSTOM as BASE_CUSTOM } from "../tools/CustomTools";
 import { EDIT_TOOLS } from "../tools/EditTools";
+import { DOC_TOOLS } from "../tools/DocTools";
 
-const CUSTOM = { ...BASE_CUSTOM, ...EDIT_TOOLS };
+const CUSTOM = { ...BASE_CUSTOM, ...EDIT_TOOLS, ...DOC_TOOLS };
 import GenericTool from "../tools/GenericTool";
 import NotFound from "./NotFound";
 

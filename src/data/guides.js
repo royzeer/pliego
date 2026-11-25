@@ -171,6 +171,21 @@ export const GUIDES = {
     steps: ["Sube el PDF escaneado.", "Elige el idioma del documento.", "Elige si quieres un PDF buscable o solo el texto.", "Haz clic en Hacer OCR y espera a que lea cada página."],
     faqs: [["¿Qué tan exacto es?", "Funciona muy bien con documentos impresos y escaneos nítidos. Con letra a mano o fotos borrosas puede tener errores."], ["¿Hay límite?", "El plan gratis lee hasta 30 páginas por archivo, sin límite de usos."]],
   },
+  "cuenta-de-cobro": {
+    intro: "Si trabajas como independiente o por prestación de servicios, la cuenta de cobro es el documento con el que le cobras a tu cliente. Llena el formulario y Pliego arma el PDF con el valor en números y en letras, tus datos de pago y tu firma.",
+    steps: ["Escribe tus datos. Se guardan en tu dispositivo para la próxima vez.", "Escribe a quién le cobras, el concepto y el valor.", "Agrega tu cuenta bancaria o Nequi y, si quieres, tu firma.", "Haz clic en Crear cuenta de cobro y descarga el PDF."],
+    faqs: [["¿El valor en letras sale automático?", "Sí. Escribe el valor en números y Pliego lo escribe en letras, por ejemplo Un millón quinientos mil pesos m/cte."], ["¿Necesito factura electrónica?", "Depende de tus ingresos y de tu régimen tributario. Confírmalo con un contador o en la DIAN."]],
+  },
+  "derecho-de-peticion": {
+    intro: "El derecho de petición te permite pedir información, documentos o una solución a una entidad pública o a una empresa privada, y obliga a responderte dentro de los plazos de ley. Llena los hechos y lo que pides, y Pliego arma el documento con la estructura correcta.",
+    steps: ["Escribe la entidad a la que va dirigido.", "Cuenta los hechos, uno por línea.", "Escribe tus peticiones, una por línea.", "Agrega tus datos de notificación y tu firma, y descarga el PDF."],
+    faqs: [["¿En cuánto tiempo deben responder?", "La Ley 1755 de 2015 fija plazos de respuesta según el tipo de petición. Guarda el comprobante de radicación con la fecha."]],
+  },
+  liquidacion: {
+    intro: "Calcula cuánto te deben pagar al terminar tu contrato: cesantías, intereses sobre cesantías, prima de servicios y vacaciones no disfrutadas, con las fórmulas del Código Sustantivo del Trabajo y los valores de 2026.",
+    steps: ["Escribe tu salario mensual y las fechas de inicio y terminación.", "Indica cuántos días de vacaciones ya disfrutaste.", "Revisa si aplica el auxilio de transporte (hasta 2 salarios mínimos).", "Mira el resultado y descárgalo en PDF."],
+    faqs: [["¿Qué valores usa para 2026?", "Salario mínimo de $1.750.905 y auxilio de transporte de $249.095."], ["¿Incluye la indemnización por despido?", "No. La indemnización depende del tipo de contrato y del motivo de terminación; consúltalo con un abogado."]],
+  },
 };
 
 export const getGuide = (id) => GUIDES[id];
