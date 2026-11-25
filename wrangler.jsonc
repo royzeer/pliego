@@ -17,5 +17,13 @@
   // IA gratuita de Cloudflare (10.000 neuronas al día) para resumir, traducir y preguntar.
   "ai": {
     "binding": "AI"
-  }
+  },
+  // Base de datos de cuentas y pagos de Pliego Pro (Cloudflare D1). Las tablas se crean solas.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pliego-db",
+      "database_id": "997802e6-7898-4ff0-aace-4a79f35f6a36"
+    }
+  ]
 }
