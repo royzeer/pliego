@@ -136,6 +136,41 @@ export const GUIDES = {
     steps: ["Sube tu PDF.", "Escribe la contraseña actual.", "Haz clic en Desbloquear PDF."],
     faqs: [],
   },
+  "firmar-pdf": {
+    intro: "Firma contratos, cartas, cuentas de cobro o formularios sin imprimir ni escanear. Dibuja tu firma con el dedo o el mouse, escríbela con letra de firma o súbele una foto, y ponla donde quieras en el PDF.",
+    steps: ["Sube el PDF que vas a firmar.", "Haz clic en la página donde va la firma.", "Dibuja, escribe o sube la foto de tu firma y dale Poner firma en la página.", "Arrástrala a su lugar y ajusta el tamaño con el punto azul.", "Si quieres, agrega la fecha de hoy y guarda el PDF."],
+    faqs: [["¿Esta firma tiene validez legal?", "Es una firma escaneada o electrónica simple, válida para la mayoría de documentos del día a día. Algunos trámites exigen firma digital certificada; revisa qué pide la entidad."], ["¿Se guarda mi firma?", "No. Se crea en tu navegador y desaparece al cerrar la página."]],
+  },
+  "editar-pdf": {
+    intro: "Escribe sobre un PDF, agrega imágenes o logos, y tapa con un recuadro lo que no quieres que se vea. Ideal para llenar formatos que no tienen campos, corregir un dato o agregar una nota.",
+    steps: ["Sube tu PDF.", "Haz clic en la página que quieres editar.", "Agrega un texto, una imagen o un recuadro.", "Muévelos, cambia su tamaño y color, y guarda."],
+    faqs: [["¿Puedo cambiar el texto que ya trae el PDF?", "Puedes taparlo con un recuadro blanco y escribir encima el texto nuevo."]],
+  },
+  "formularios-pdf": {
+    intro: "Llena formularios PDF que traen campos (cuadros de texto, casillas y listas) sin necesidad de programas instalados. Pliego detecta los campos y te los muestra en una lista para que los completes.",
+    steps: ["Sube el formulario PDF.", "Llena los campos que aparecen.", "Marca Aplanar si no quieres que lo vuelvan a editar.", "Guarda el formulario."],
+    faqs: [["¿Y si mi PDF no tiene campos?", "Usa Editar PDF para escribir encima de cualquier parte de la página."]],
+  },
+  "encabezado-pie": {
+    intro: "Agrega un texto arriba o abajo de todas las páginas: el nombre de la institución, el título del trabajo, la fecha o el número de página en formato 1 de 10.",
+    steps: ["Sube tu PDF.", "Escribe el encabezado, el pie o ambos. Usa {n}, {total} y {fecha} si los necesitas.", "Elige la alineación y el tamaño.", "Haz clic en Agregar encabezado y pie."],
+    faqs: [],
+  },
+  "censurar-pdf": {
+    intro: "Tapa de verdad datos sensibles antes de compartir un documento: números de cédula, cuentas bancarias, direcciones o firmas. A diferencia de un recuadro negro normal, Pliego borra lo que hay debajo, así nadie lo puede copiar ni recuperar.",
+    steps: ["Sube tu PDF.", "Arrastra sobre la página para tapar zonas, o busca un texto para taparlo en todo el documento.", "Revisa que todo lo sensible quede cubierto.", "Haz clic en Censurar y guardar."],
+    faqs: [["¿Por qué las páginas censuradas quedan como imagen?", "Es la forma segura de que el texto tapado desaparezca del archivo. Las páginas sin cambios se conservan igual."]],
+  },
+  "comparar-pdf": {
+    intro: "Encuentra qué cambió entre dos versiones de un documento, como un contrato, una cotización o un trabajo. Pliego compara el texto página por página y te muestra en verde lo agregado y en rojo lo quitado.",
+    steps: ["Sube la versión original.", "Sube la versión nueva.", "Haz clic en Comparar y revisa los cambios por página."],
+    faqs: [["¿Compara imágenes o diseño?", "No, compara el texto. Si los PDF son escaneados, primero pásalos por OCR."]],
+  },
+  "ocr-pdf": {
+    intro: "Convierte un PDF escaneado o una foto en un documento en el que puedes buscar y copiar el texto. El OCR lee las letras de la imagen y agrega una capa de texto invisible encima, sin cambiar cómo se ve el documento.",
+    steps: ["Sube el PDF escaneado.", "Elige el idioma del documento.", "Elige si quieres un PDF buscable o solo el texto.", "Haz clic en Hacer OCR y espera a que lea cada página."],
+    faqs: [["¿Qué tan exacto es?", "Funciona muy bien con documentos impresos y escaneos nítidos. Con letra a mano o fotos borrosas puede tener errores."], ["¿Hay límite?", "El plan gratis lee hasta 30 páginas por archivo, sin límite de usos."]],
+  },
 };
 
 export const getGuide = (id) => GUIDES[id];

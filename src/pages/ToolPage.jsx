@@ -5,7 +5,10 @@ import { TopBar } from "../components/Layout";
 import { Guide, EngineNote } from "../components/Parts";
 import { getTool } from "../data/tools";
 import { REGISTRY } from "../tools/registry";
-import { CUSTOM } from "../tools/CustomTools";
+import { CUSTOM as BASE_CUSTOM } from "../tools/CustomTools";
+import { EDIT_TOOLS } from "../tools/EditTools";
+
+const CUSTOM = { ...BASE_CUSTOM, ...EDIT_TOOLS };
 import GenericTool from "../tools/GenericTool";
 import NotFound from "./NotFound";
 

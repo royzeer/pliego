@@ -1,6 +1,7 @@
 // Configuración de las herramientas "simples" (un formulario + archivos).
 // Las herramientas con pantalla especial están en src/tools/*.jsx
 import * as P from "../lib/pdf";
+import * as E from "../lib/edit";
 import { FREE_LIMITS } from "../data/tools";
 
 const pagesField = (label = "Páginas", placeholder = "1-3, 5, 8-10") => ({ key: "pages", type: "text", label, placeholder, help: "Separa con comas. Usa guion para rangos." });
@@ -144,5 +145,25 @@ export const REGISTRY = {
     fields: [{ key: "password", type: "password", label: "Contraseña actual del PDF" }],
     note: "Solo desbloquea PDF de los que conoces la contraseña.",
     run: ([f], o) => P.unlock(f, o),
+  },
+  "encabezado-pie": {
+    accept: "pdf", action: "Agregar encabezado y pie", defaults: { header: "", footer: "Página {n} de {total}", align: "centro", size: 10 },
+    fields: [
+      { key: "header", type: "text", label: "Encabezado (arriba)", placeholder: "Universidad del Magdalena · Informe final" },
+      { key: "footer", type: "text", label: "Pie de página (abajo)", placeholder: "Página {n} de {total}" },
+      { key: "align", type: "segment", label: "Alineación", options: [{ value: "izq", label: "Izquierda" }, { value: "centro", label: "Centro" }, { value: "der", label: "Derecha" }] },
+      { key: "size", type: "range", label: "Tamaño de letra", min: 7, max: 16, step: 1 },
+    ],
+    note: "Puedes usar {n} para el número de página, {total} para el total y {fecha} para la fecha de hoy.",
+    run: ([f], o) => E.headerFooter(f, o),
+  },
+  "ocr-pdf": {
+    accept: "pdf", action: "Hacer OCR", defaults: { lang: "spa", output: "pdf" }, progress: true,
+    fields: [
+      { key: "lang", type: "segment", label: "Idioma del documento", options: [{ value: "spa", label: "Español" }, { value: "eng", label: "Inglés" }, { value: "spa+eng", label: "Ambos" }] },
+      { key: "output", type: "segment", label: "Resultado", options: [{ value: "pdf", label: "PDF buscable" }, { value: "txt", label: "Solo texto (.txt)" }] },
+    ],
+    note: `Lee el texto de documentos escaneados o fotos. Plan gratis: hasta ${FREE_LIMITS.ocrPages} páginas por archivo, sin límite de usos. La primera vez descarga el lector de idioma (unos segundos).`,
+    run: ([f], o, prog) => E.ocr(f, { ...o, maxPages: FREE_LIMITS.ocrPages }, prog),
   },
 };

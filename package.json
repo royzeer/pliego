@@ -12,11 +12,18 @@
   "dependencies": {
     "@cantoo/pdf-lib": "^2.11.1",
     "@tabler/icons-react": "^3.53.0",
+    "diff": "^9.0.0",
+    "docx": "^9.16.0",
+    "docx-preview": "^0.4.1",
+    "html2canvas-pro": "^2.5.0",
     "jszip": "^3.10.2",
     "pdfjs-dist": "^6.5.438",
+    "pptxgenjs": "^4.0.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-router-dom": "^7.18.7"
+    "react-router-dom": "^7.18.7",
+    "tesseract.js": "^7.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

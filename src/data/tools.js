@@ -37,7 +37,7 @@ export const TOOLS = [
   // ---------- Optimizar ----------
   { id: "comprimir-pdf", name: "Comprimir PDF", desc: "Reduce el peso con la calidad que elijas.", cat: "optimizar", icon: "IconFileZip", status: "listo", engine: "navegador" },
   { id: "reparar-pdf", name: "Reparar PDF", desc: "Recupera PDF dañados.", cat: "optimizar", icon: "IconTool", status: "listo", engine: "navegador" },
-  { id: "ocr-pdf", name: "OCR PDF", desc: "Vuelve buscable un PDF escaneado.", cat: "optimizar", icon: "IconTextRecognition", status: "pronto", engine: "navegador", limitFree: "30 páginas por archivo" },
+  { id: "ocr-pdf", name: "OCR PDF", desc: "Vuelve buscable un PDF escaneado.", cat: "optimizar", icon: "IconTextRecognition", status: "listo", engine: "navegador", limitFree: "30 páginas por archivo" },
   { id: "quitar-metadatos", name: "Quitar metadatos", desc: "Borra autor, programa y fechas ocultas.", cat: "optimizar", icon: "IconEraser", status: "listo", engine: "navegador", exclusive: true },
 
   // ---------- Convertir a PDF ----------
@@ -61,16 +61,16 @@ export const TOOLS = [
   { id: "numeros-de-pagina", name: "Números de página", desc: "Numera con la posición que quieras.", cat: "editar", icon: "IconNumbers", status: "listo", engine: "navegador" },
   { id: "marca-de-agua", name: "Marca de agua", desc: "Texto encima de cada página.", cat: "editar", icon: "IconDroplet", status: "listo", engine: "navegador" },
   { id: "recortar-pdf", name: "Recortar PDF", desc: "Quita márgenes de las páginas.", cat: "editar", icon: "IconCrop", status: "listo", engine: "navegador" },
-  { id: "editar-pdf", name: "Editar PDF", desc: "Agrega texto e imágenes.", cat: "editar", icon: "IconPencil", status: "pronto", engine: "navegador" },
-  { id: "formularios-pdf", name: "Formularios PDF", desc: "Llena formularios PDF.", cat: "editar", icon: "IconForms", status: "pronto", engine: "navegador" },
-  { id: "encabezado-pie", name: "Encabezado y pie", desc: "Texto arriba o abajo de cada página.", cat: "editar", icon: "IconLayoutNavbar", status: "pronto", engine: "navegador", exclusive: true },
+  { id: "editar-pdf", name: "Editar PDF", desc: "Agrega texto e imágenes.", cat: "editar", icon: "IconPencil", status: "listo", engine: "navegador" },
+  { id: "formularios-pdf", name: "Formularios PDF", desc: "Llena formularios PDF.", cat: "editar", icon: "IconForms", status: "listo", engine: "navegador" },
+  { id: "encabezado-pie", name: "Encabezado y pie", desc: "Texto arriba o abajo de cada página.", cat: "editar", icon: "IconLayoutNavbar", status: "listo", engine: "navegador", exclusive: true },
 
   // ---------- Seguridad ----------
   { id: "proteger-pdf", name: "Proteger PDF", desc: "Ponle contraseña con AES-256.", cat: "seguridad", icon: "IconLock", status: "listo", engine: "navegador" },
   { id: "desbloquear-pdf", name: "Desbloquear PDF", desc: "Quita la contraseña si la conoces.", cat: "seguridad", icon: "IconLockOpen", status: "listo", engine: "navegador" },
-  { id: "firmar-pdf", name: "Firmar PDF", desc: "Dibuja tu firma y ponla en el PDF.", cat: "seguridad", icon: "IconSignature", status: "pronto", engine: "navegador" },
-  { id: "censurar-pdf", name: "Censurar PDF", desc: "Tapa datos de verdad, no solo encima.", cat: "seguridad", icon: "IconEyeOff", status: "pronto", engine: "navegador" },
-  { id: "comparar-pdf", name: "Comparar PDF", desc: "Ve qué cambió entre dos versiones.", cat: "seguridad", icon: "IconGitCompare", status: "pronto", engine: "navegador" },
+  { id: "firmar-pdf", name: "Firmar PDF", desc: "Dibuja tu firma y ponla en el PDF.", cat: "seguridad", icon: "IconSignature", status: "listo", engine: "navegador" },
+  { id: "censurar-pdf", name: "Censurar PDF", desc: "Tapa datos de verdad, no solo encima.", cat: "seguridad", icon: "IconEyeOff", status: "listo", engine: "navegador" },
+  { id: "comparar-pdf", name: "Comparar PDF", desc: "Ve qué cambió entre dos versiones.", cat: "seguridad", icon: "IconGitCompare", status: "listo", engine: "navegador" },
 
   // ---------- IA ----------
   { id: "resumir-pdf", name: "Resumir con IA", desc: "Las ideas clave en segundos.", cat: "ia", icon: "IconSparkles", status: "pronto", engine: "ia", limitFree: "20 páginas por archivo" },
@@ -91,6 +91,7 @@ export const FREE_LIMITS = {
   maxFileMB: 100,
   maxFilesPerTask: 20,
   markdownPages: 50,
+  ocrPages: 30,
 };
 
 export const TRAMITES = [
