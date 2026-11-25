@@ -53,17 +53,16 @@ Para generar la versión final:
 npm run build
 ```
 
-## Publicarlo (Cloudflare Pages, gratis)
+## Publicarlo en Cloudflare (gratis)
 
-Se usa Cloudflare Pages porque su plan gratis permite uso comercial (anuncios y planes de pago) y no cobra por tráfico.
+Se usa Cloudflare porque su plan gratis permite uso comercial (anuncios y planes de pago) y las visitas a archivos estáticos son gratis e ilimitadas. Cloudflare recomienda Workers para proyectos nuevos; el archivo `wrangler.jsonc` ya trae la configuración.
 
 1. Entra a dash.cloudflare.com y crea una cuenta.
-2. Ve a Workers y Pages, luego Crear, pestaña Pages, y elige Conectar con Git.
+2. Ve a Workers y Pages, luego Crear aplicación, y elige Importar un repositorio (Conectar con GitHub).
 3. Autoriza GitHub y elige el repositorio `pliego`.
-4. Configuración de compilación:
-   - Framework: React (Vite)
+4. Configuración:
    - Comando de compilación: `npm run build`
-   - Carpeta de salida: `dist`
+   - Comando de despliegue: `npx wrangler deploy`
 5. Guarda y publica. Cada vez que subas cambios a GitHub, el sitio se actualiza solo.
 
 Cuando AdSense apruebe el sitio, agrega las variables `VITE_ADSENSE_CLIENT` y `VITE_ADSENSE_SLOT` en la configuración del proyecto en Cloudflare (o en un archivo `.env` a partir de `.env.example`).
