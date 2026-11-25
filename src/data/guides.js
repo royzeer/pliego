@@ -186,6 +186,46 @@ export const GUIDES = {
     steps: ["Escribe tu salario mensual y las fechas de inicio y terminación.", "Indica cuántos días de vacaciones ya disfrutaste.", "Revisa si aplica el auxilio de transporte (hasta 2 salarios mínimos).", "Mira el resultado y descárgalo en PDF."],
     faqs: [["¿Qué valores usa para 2026?", "Salario mínimo de $1.750.905 y auxilio de transporte de $249.095."], ["¿Incluye la indemnización por despido?", "No. La indemnización depende del tipo de contrato y del motivo de terminación; consúltalo con un abogado."]],
   },
+  "pdf-a-word": {
+    intro: "Convierte un PDF en un documento de Word que puedes editar. El modo Editable saca el texto con sus títulos y párrafos; el modo Igual al original pone cada página como imagen exacta, ideal cuando solo necesitas el archivo en formato Word.",
+    steps: ["Sube tu PDF.", "Elige Editable o Igual al original.", "Haz clic en Convertir a Word y abre el .docx en Word, Google Docs o LibreOffice."],
+    faqs: [["¿Se conservan las tablas y el diseño?", "En modo Editable se conserva el texto y los títulos, pero no siempre el diseño exacto. Si necesitas que se vea idéntico, usa Igual al original."]],
+  },
+  "pdf-a-powerpoint": {
+    intro: "Convierte cada página de un PDF en una diapositiva de PowerPoint. Muy útil cuando te mandan una presentación en PDF y necesitas proyectarla o agregarle diapositivas.",
+    steps: ["Sube tu PDF.", "Haz clic en Convertir a PowerPoint.", "Abre el .pptx en PowerPoint, Google Slides o Keynote."],
+    faqs: [],
+  },
+  "pdf-a-excel": {
+    intro: "Saca las tablas de un PDF a una hoja de cálculo de Excel, una hoja por página, con los números listos para sumar. Funciona mejor con extractos, facturas y reportes con tablas sencillas.",
+    steps: ["Sube tu PDF (con texto, no escaneado).", "Haz clic en Convertir a Excel.", "Revisa las columnas en Excel o Google Sheets."],
+    faqs: [["¿Funciona con un PDF escaneado?", "No directamente. Primero pásalo por OCR para que tenga texto."]],
+  },
+  "pdf-a-pdfa": {
+    intro: "PDF/A es la versión del PDF pensada para guardar documentos a largo plazo: incluye todo lo necesario para verse igual dentro de muchos años. Algunas entidades, juzgados y repositorios académicos lo piden.",
+    steps: ["Sube tu PDF.", "Elige PDF/A-2b (recomendado) o PDF/A-1b.", "Haz clic en Convertir a PDF/A y espera a que cargue el convertidor la primera vez."],
+    faqs: [["¿Cómo sé si la entidad lo acepta?", "Si la plataforma tiene un validador de PDF/A, súbelo ahí. Pliego genera el archivo con Ghostscript, un convertidor profesional."]],
+  },
+  "word-a-pdf": {
+    intro: "Convierte un documento de Word (.docx) en PDF sin tener Office instalado, directo en el navegador del celular o el computador.",
+    steps: ["Sube tu archivo .docx.", "Elige carta o A4.", "Haz clic en Convertir a PDF y descarga."],
+    faqs: [["¿Puedo convertir archivos .doc antiguos?", "Ábrelos en Word, Google Docs o LibreOffice y guárdalos como .docx primero."]],
+  },
+  "excel-a-pdf": {
+    intro: "Convierte un libro de Excel o un CSV en PDF, con cada hoja y su nombre. Elige horizontal para tablas anchas.",
+    steps: ["Sube tu archivo .xlsx, .xls o .csv.", "Elige el tamaño de hoja y la orientación.", "Haz clic en Convertir a PDF."],
+    faqs: [],
+  },
+  "powerpoint-a-pdf": {
+    intro: "Convierte una presentación de PowerPoint (.pptx) en PDF, una diapositiva por página, para enviarla o imprimirla sin que se dañe el diseño en otro computador.",
+    steps: ["Sube tu archivo .pptx.", "Haz clic en Convertir a PDF.", "Descarga el PDF y revisa cada diapositiva."],
+    faqs: [["¿Pasan las animaciones?", "No: un PDF es estático. Se conservan los textos, imágenes y colores de cada diapositiva."]],
+  },
+  "html-a-pdf": {
+    intro: "Convierte un archivo HTML o un pedazo de código HTML en un PDF. Útil para guardar correos, plantillas o páginas que descargaste.",
+    steps: ["Sube el archivo .html o pega el código en el panel.", "Elige el tamaño de hoja.", "Haz clic en Convertir a PDF."],
+    faqs: [["¿Puedo convertir una página web con su enlace?", "Abre la página en tu navegador, elige Imprimir y luego Guardar como PDF."]],
+  },
 };
 
 export const getGuide = (id) => GUIDES[id];

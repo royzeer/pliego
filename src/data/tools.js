@@ -42,17 +42,17 @@ export const TOOLS = [
 
   // ---------- Convertir a PDF ----------
   { id: "jpg-a-pdf", name: "Imagen a PDF", desc: "JPG, PNG o WEBP a PDF.", cat: "convertir-a", icon: "IconPhoto", status: "listo", engine: "navegador" },
-  { id: "word-a-pdf", name: "Word a PDF", desc: "DOC y DOCX a PDF.", cat: "convertir-a", icon: "IconFileTypeDocx", status: "pronto", engine: "servidor", limitFree: "25 MB por archivo" },
-  { id: "powerpoint-a-pdf", name: "PowerPoint a PDF", desc: "PPT y PPTX a PDF.", cat: "convertir-a", icon: "IconFileTypePpt", status: "pronto", engine: "servidor", limitFree: "25 MB por archivo" },
-  { id: "excel-a-pdf", name: "Excel a PDF", desc: "XLS y XLSX a PDF.", cat: "convertir-a", icon: "IconFileTypeXls", status: "pronto", engine: "servidor", limitFree: "25 MB por archivo" },
-  { id: "html-a-pdf", name: "HTML a PDF", desc: "Convierte una página web en PDF.", cat: "convertir-a", icon: "IconWorldWww", status: "pronto", engine: "servidor" },
+  { id: "word-a-pdf", name: "Word a PDF", desc: "Documentos de Word (.docx) a PDF.", cat: "convertir-a", icon: "IconFileTypeDocx", status: "listo", engine: "navegador", limitFree: "100 MB por archivo" },
+  { id: "powerpoint-a-pdf", name: "PowerPoint a PDF", desc: "Presentaciones (.pptx) a PDF.", cat: "convertir-a", icon: "IconFileTypePpt", status: "listo", engine: "navegador", limitFree: "100 MB por archivo" },
+  { id: "excel-a-pdf", name: "Excel a PDF", desc: "Hojas de Excel (.xlsx, .xls, .csv) a PDF.", cat: "convertir-a", icon: "IconFileTypeXls", status: "listo", engine: "navegador", limitFree: "100 MB por archivo" },
+  { id: "html-a-pdf", name: "HTML a PDF", desc: "Un archivo HTML o código HTML a PDF.", cat: "convertir-a", icon: "IconWorldWww", status: "listo", engine: "navegador" },
 
   // ---------- Convertir desde PDF ----------
   { id: "pdf-a-jpg", name: "PDF a imagen", desc: "Cada página como JPG o PNG.", cat: "convertir-desde", icon: "IconFileTypeJpg", status: "listo", engine: "navegador" },
-  { id: "pdf-a-word", name: "PDF a Word", desc: "Edita tu PDF en Word.", cat: "convertir-desde", icon: "IconFileTypeDocx", status: "pronto", engine: "servidor", limitFree: "50 páginas por archivo" },
-  { id: "pdf-a-powerpoint", name: "PDF a PowerPoint", desc: "Cada página como diapositiva.", cat: "convertir-desde", icon: "IconFileTypePpt", status: "pronto", engine: "servidor", limitFree: "50 páginas por archivo" },
-  { id: "pdf-a-excel", name: "PDF a Excel", desc: "Saca las tablas a una hoja de cálculo.", cat: "convertir-desde", icon: "IconFileTypeXls", status: "pronto", engine: "servidor", limitFree: "50 páginas por archivo" },
-  { id: "pdf-a-pdfa", name: "PDF a PDF/A", desc: "Formato de archivo para entidades.", cat: "convertir-desde", icon: "IconArchive", status: "pronto", engine: "servidor" },
+  { id: "pdf-a-word", name: "PDF a Word", desc: "Edita tu PDF en Word.", cat: "convertir-desde", icon: "IconFileTypeDocx", status: "listo", engine: "navegador", limitFree: "50 páginas por archivo" },
+  { id: "pdf-a-powerpoint", name: "PDF a PowerPoint", desc: "Cada página como diapositiva.", cat: "convertir-desde", icon: "IconFileTypePpt", status: "listo", engine: "navegador", limitFree: "50 páginas por archivo" },
+  { id: "pdf-a-excel", name: "PDF a Excel", desc: "Saca las tablas a una hoja de cálculo.", cat: "convertir-desde", icon: "IconFileTypeXls", status: "listo", engine: "navegador", limitFree: "50 páginas por archivo" },
+  { id: "pdf-a-pdfa", name: "PDF a PDF/A", desc: "PDF/A-2b para archivo y entidades.", cat: "convertir-desde", icon: "IconArchive", status: "listo", engine: "navegador" },
   { id: "pdf-a-markdown", name: "PDF a Markdown", desc: "Texto con títulos, listo para IA o notas.", cat: "convertir-desde", icon: "IconMarkdown", status: "listo", engine: "navegador", limitFree: "50 páginas por archivo" },
   { id: "extraer-texto", name: "Extraer texto", desc: "Todo el texto del PDF en un .txt.", cat: "convertir-desde", icon: "IconFileText", status: "listo", engine: "navegador", exclusive: true },
 
@@ -92,6 +92,7 @@ export const FREE_LIMITS = {
   maxFilesPerTask: 20,
   markdownPages: 50,
   ocrPages: 30,
+  convertPages: 50,
 };
 
 export const TRAMITES = [

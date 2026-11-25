@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@cantoo/pdf-lib": "^2.11.1",
+    "@okathira/ghostpdl-wasm": "^1.1.0",
     "@tabler/icons-react": "^3.53.0",
     "diff": "^9.0.0",
     "docx": "^9.16.0",

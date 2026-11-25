@@ -2,6 +2,7 @@
 // Las herramientas con pantalla especial están en src/tools/*.jsx
 import * as P from "../lib/pdf";
 import * as E from "../lib/edit";
+import * as C from "../lib/convert";
 import { FREE_LIMITS } from "../data/tools";
 
 const pagesField = (label = "Páginas", placeholder = "1-3, 5, 8-10") => ({ key: "pages", type: "text", label, placeholder, help: "Separa con comas. Usa guion para rangos." });
@@ -165,5 +166,60 @@ export const REGISTRY = {
     ],
     note: `Lee el texto de documentos escaneados o fotos. Plan gratis: hasta ${FREE_LIMITS.ocrPages} páginas por archivo, sin límite de usos. La primera vez descarga el lector de idioma (unos segundos).`,
     run: ([f], o, prog) => E.ocr(f, { ...o, maxPages: FREE_LIMITS.ocrPages }, prog),
+  },
+  "pdf-a-word": {
+    accept: "pdf", action: "Convertir a Word", defaults: { mode: "texto" }, progress: true,
+    fields: [{ key: "mode", type: "segment", label: "Tipo de Word", options: [{ value: "texto", label: "Editable" }, { value: "imagen", label: "Igual al original" }] }],
+    note: `Editable: saca el texto con títulos y párrafos para que lo cambies. Igual al original: cada página como imagen exacta. Plan gratis: hasta ${FREE_LIMITS.convertPages} páginas por archivo.`,
+    run: ([f], o, prog) => C.pdfToWord(f, { ...o, maxPages: FREE_LIMITS.convertPages }, prog),
+  },
+  "pdf-a-powerpoint": {
+    accept: "pdf", action: "Convertir a PowerPoint", progress: true,
+    note: `Cada página queda como una diapositiva. Plan gratis: hasta ${FREE_LIMITS.convertPages} páginas por archivo.`,
+    run: ([f], o, prog) => C.pdfToPowerPoint(f, { maxPages: FREE_LIMITS.convertPages }, prog),
+  },
+  "pdf-a-excel": {
+    accept: "pdf", action: "Convertir a Excel", progress: true,
+    note: `Saca el texto y las tablas a una hoja por página, y convierte los números para que puedas sumar. Funciona mejor con tablas sencillas. Plan gratis: hasta ${FREE_LIMITS.convertPages} páginas.`,
+    run: ([f], o, prog) => C.pdfToExcel(f, { maxPages: FREE_LIMITS.convertPages }, prog),
+  },
+  "pdf-a-pdfa": {
+    accept: "pdf", action: "Convertir a PDF/A", defaults: { level: 2 }, progress: true,
+    fields: [{ key: "level", type: "segment", label: "Versión", options: [{ value: 2, label: "PDF/A-2b (recomendado)" }, { value: 1, label: "PDF/A-1b" }] }],
+    note: "PDF/A es el formato que piden algunas entidades y repositorios para guardar documentos a largo plazo. La primera vez se descarga el convertidor (unos 15 MB).",
+    run: ([f], o, prog) => C.pdfToPdfA(f, o, prog),
+  },
+  "word-a-pdf": {
+    accept: ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document", action: "Convertir a PDF", defaults: { paper: "carta" }, progress: true,
+    dropTitle: "Suelta tu documento de Word", dropHint: "Archivos .docx",
+    fields: [{ key: "paper", type: "segment", label: "Tamaño de hoja", options: [{ value: "carta", label: "Carta" }, { value: "a4", label: "A4" }] }],
+    note: "El PDF se ve igual a tu documento, pero sus páginas se guardan como imagen (el texto no se puede seleccionar). Para .doc antiguos, ábrelos en Word y guárdalos como .docx.",
+    run: ([f], o, prog) => C.wordToPdf(f, o, prog),
+  },
+  "excel-a-pdf": {
+    accept: ".xlsx,.xls,.csv,.ods", action: "Convertir a PDF", defaults: { paper: "carta", orientation: "horizontal" }, progress: true,
+    dropTitle: "Suelta tu archivo de Excel", dropHint: "Archivos .xlsx, .xls o .csv",
+    fields: [
+      { key: "paper", type: "segment", label: "Tamaño de hoja", options: [{ value: "carta", label: "Carta" }, { value: "a4", label: "A4" }] },
+      { key: "orientation", type: "segment", label: "Orientación", options: [{ value: "horizontal", label: "Horizontal" }, { value: "vertical", label: "Vertical" }] },
+    ],
+    note: "Cada hoja del libro sale en el PDF con su nombre como título.",
+    run: ([f], o, prog) => C.excelToPdf(f, o, prog),
+  },
+  "powerpoint-a-pdf": {
+    accept: ".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation", action: "Convertir a PDF", progress: true,
+    dropTitle: "Suelta tu presentación", dropHint: "Archivos .pptx",
+    note: "Cada diapositiva queda como una página con sus textos, imágenes y colores. Las animaciones, videos y efectos especiales no pasan al PDF.",
+    run: ([f], o, prog) => C.powerpointToPdf(f, o, prog),
+  },
+  "html-a-pdf": {
+    accept: ".html,.htm,text/html", min: 0, action: "Convertir a PDF", defaults: { html: "", paper: "carta" }, progress: true,
+    dropTitle: "Suelta un archivo HTML", dropHint: "o pega el código en el panel",
+    fields: [
+      { key: "html", type: "area", label: "O pega aquí el código HTML", placeholder: "<h1>Hola</h1><p>Mi documento</p>" },
+      { key: "paper", type: "segment", label: "Tamaño de hoja", options: [{ value: "carta", label: "Carta" }, { value: "a4", label: "A4" }] },
+    ],
+    note: "Para guardar una página web que estás viendo, también puedes usar Imprimir en tu navegador y elegir Guardar como PDF.",
+    run: (files, o, prog) => C.htmlToPdf(files[0], o, prog),
   },
 };

@@ -65,6 +65,10 @@ export function Field({ field, value, onChange }) {
     return (
       <label className="check"><input type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} />{label}</label>
     );
+  } else if (type === "area") {
+    control = (
+      <textarea className="input" style={{ height: 140, paddingTop: 10, resize: "vertical", fontFamily: "monospace", fontSize: 13 }} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
+    );
   } else if (type === "range") {
     control = (
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
