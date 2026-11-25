@@ -2,9 +2,9 @@
 // Las herramientas de PDF no pasan por aquí: corren en el navegador.
 
 const MODELS = [
-  "@cf/meta/llama-3.1-8b-instruct-fp8",
   "@cf/meta/llama-3.2-3b-instruct",
   "@cf/mistralai/mistral-small-3.1-24b-instruct",
+  "@cf/meta/llama-3.1-8b-instruct-fp8",
 ];
 const MAX_CHARS = 16000; // por petición
 const ALLOWED = [/^https:\/\/(www\.)?pliego\.lat$/, /^https:\/\/[\w-]+\.[\w-]+\.workers\.dev$/, /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
@@ -29,13 +29,13 @@ function buildMessages({ task, text, lang, question, history }) {
   const doc = String(text || "").slice(0, MAX_CHARS);
   if (task === "resumir") {
     return [
-      { role: "system", content: "Eres un asistente que resume documentos en español claro y sencillo. No inventes datos que no estén en el texto." },
+      { role: "system", content: "Eres un asistente que resume documentos en español claro y sencillo. No inventes datos que no estén en el texto. Escribe texto plano: sin asteriscos, sin negritas y sin títulos con #." },
       { role: "user", content: `Resume el siguiente documento. Primero escribe un resumen de 3 a 5 oraciones. Luego una lista de 5 a 8 puntos clave que empiecen con "- ". Si hay fechas, valores o nombres importantes, inclúyelos.\n\nDOCUMENTO:\n${doc}` },
     ];
   }
   if (task === "resumir-partes") {
     return [
-      { role: "system", content: "Eres un asistente que une resúmenes parciales en uno solo, en español claro. No inventes datos." },
+      { role: "system", content: "Eres un asistente que une resúmenes parciales en uno solo, en español claro. No inventes datos. Escribe texto plano: sin asteriscos, sin negritas y sin títulos con #." },
       { role: "user", content: `Estos son resúmenes de partes de un mismo documento. Escribe un resumen final de 3 a 5 oraciones y luego de 5 a 8 puntos clave que empiecen con "- ".\n\n${doc}` },
     ];
   }
@@ -49,7 +49,7 @@ function buildMessages({ task, text, lang, question, history }) {
   if (task === "preguntar") {
     const prev = Array.isArray(history) ? history.slice(-6).filter((m) => m && (m.role === "user" || m.role === "assistant")).map((m) => ({ role: m.role, content: String(m.content).slice(0, 1500) })) : [];
     return [
-      { role: "system", content: "Respondes preguntas sobre un documento, en español, de forma breve y clara. Usa solo la información del documento. Si la respuesta no está en el documento, dilo con honestidad. Cuando sea útil, menciona la página." },
+      { role: "system", content: "Respondes preguntas sobre un documento, en español, de forma breve y clara. Usa solo la información del documento. Si la respuesta no está en el documento, dilo con honestidad. Cuando sea útil, menciona la página. Escribe texto plano, sin asteriscos ni markdown." },
       { role: "user", content: `Partes relevantes del documento:\n${doc}` },
       { role: "assistant", content: "Entendido. ¿Qué quieres saber del documento?" },
       ...prev,
@@ -80,8 +80,11 @@ async function handleApi(request, env) {
   for (const model of MODELS) {
     try {
       const res = await env.AI.run(model, { messages, max_tokens: maxTokens, temperature: body.task === "traducir" ? 0.2 : 0.3 });
-      const text = typeof res === "string" ? res : res?.response ?? res?.choices?.[0]?.message?.content ?? "";
-      if (String(text).trim()) return json({ text: String(text).trim(), model });
+      const raw = typeof res === "string" ? res : res?.response ?? res?.choices?.[0]?.message?.content ?? "";
+      const text = String(raw)
+        .replace(/\*\*(.+?)\*\*/g, "$1").replace(/__(.+?)__/g, "$1")
+        .replace(/^#{1,6}\s*/gm, "").replace(/^(\s*[-*•]\s*)+/gm, "- ").trim();
+      if (text) return json({ text, model });
     } catch (err) {
       lastError = String(err?.message || err);
       // Si se acabó la cuota gratis del día, no tiene sentido probar otro modelo
