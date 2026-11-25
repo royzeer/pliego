@@ -62,7 +62,7 @@ export function Privacidad() {
         <p>Las herramientas de inteligencia artificial (Resumir, Traducir y Pregúntale al PDF) tampoco suben tu archivo: Pliego saca el texto en tu dispositivo y solo ese texto se envía a Workers AI de Cloudflare para generar la respuesta. Pliego no guarda ese texto ni las respuestas.</p>
 
         <h2>3. Datos que se guardan en tu navegador</h2>
-        <p>Pliego guarda en el almacenamiento local de tu navegador (localStorage) datos que nunca salen de tu dispositivo: el tema claro u oscuro, las herramientas que usaste hace poco y estadísticas de uso como el número de archivos procesados. Puedes borrarlos cuando quieras desde la configuración de tu navegador.</p>
+        <p>Pliego guarda en el almacenamiento local de tu navegador (localStorage) datos que nunca salen de tu dispositivo: el tema claro u oscuro, las herramientas que usaste hace poco, estadísticas de uso como el número de archivos procesados, los datos que escribes en las plantillas para no volver a escribirlos y, si tienes Pro, tu código de activación, tus firmas y tus clientes guardados. Puedes borrarlos cuando quieras desde la configuración de tu navegador.</p>
 
         <h2>4. Publicidad y cookies de terceros</h2>
         <p>Pliego puede mostrar anuncios de Google AdSense para mantenerse gratis. Proveedores externos, incluido Google, usan cookies para mostrar anuncios basados en las visitas anteriores del usuario a este sitio web u otros sitios web.</p>
@@ -73,7 +73,8 @@ export function Privacidad() {
         <p>Podemos usar herramientas de medición (como las estadísticas de Cloudflare) para saber cuántas personas visitan el sitio y qué páginas usan. Esa información es agregada y no incluye el contenido de tus archivos.</p>
 
         <h2>6. Pagos</h2>
-        <p>Cuando existan los planes de pago, los pagos se harán a través de una pasarela de pagos externa. Pliego no guarda los datos de tu tarjeta.</p>
+        <p>Los pagos de Pliego Pro se hacen en Mercado Pago. Tus datos de pago (tarjeta, cuenta bancaria, correo) los recibe y trata Mercado Pago según su propia política de privacidad; Pliego no los ve ni los guarda.</p>
+        <p>Para activar Pro, el servidor de Pliego consulta a Mercado Pago si el pago fue aprobado y crea un código de activación con el plan y la fecha de vencimiento. Pliego no guarda una base de datos de compradores.</p>
 
         <h2>7. Tus derechos</h2>
         <p>De acuerdo con la Ley 1581 de 2012 de Colombia, puedes conocer, actualizar, rectificar y pedir que se borren tus datos personales escribiendo a {SITE.email}.</p>
@@ -105,10 +106,15 @@ export function Terminos() {
         <h2>5. Calculadoras y plantillas</h2>
         <p>Las calculadoras y plantillas son guías de referencia y no reemplazan la asesoría de un abogado o contador.</p>
         <h2>6. Publicidad</h2>
-        <p>El plan gratis puede mostrar anuncios. Los planes de pago, cuando estén disponibles, los quitan.</p>
-        <h2>7. Cambios</h2>
+        <p>El plan gratis puede mostrar anuncios. Pliego Pro no los muestra.</p>
+        <h2>7. Pliego Pro</h2>
+        <p>Pliego Pro cuesta $9.900 por 30 días o $99.000 por 365 días, en pesos colombianos. Es un pago único hecho en Mercado Pago: no es una suscripción y no se renueva solo. Pro empieza el día en que Mercado Pago aprueba el pago.</p>
+        <p>Al pagar recibes un código de activación personal para usar Pro en tus propios dispositivos. No lo compartas ni lo publiques: si detectamos que un código se usa de forma abusiva, podemos desactivarlo.</p>
+        <p>Pro sube los límites por archivo, quita los anuncios y guarda tus firmas y clientes en tu navegador. Los límites exactos están en la página de Planes. Si borras los datos del navegador, vuelve a activar Pro con tu código.</p>
+        <p>Si tienes un problema con tu pago o con Pro, escríbenos a {SITE.email} con el número de la operación de Mercado Pago y lo revisamos.</p>
+        <h2>8. Cambios</h2>
         <p>Podemos actualizar estos términos. La versión vigente siempre estará en esta página.</p>
-        <h2>8. Contacto</h2>
+        <h2>9. Contacto</h2>
         <p>Preguntas sobre estos términos: {SITE.email}.</p>
       </Doc>
     </>

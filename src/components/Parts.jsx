@@ -2,6 +2,7 @@ import { useState } from "react";
 import Icon from "./Icon";
 import { formatSize } from "../lib/files";
 import { ENGINE_LABEL, FREE_LIMITS } from "../data/tools";
+import { usePro } from "../lib/pro";
 import { getGuide } from "../data/guides";
 import { GUIDE_SLUGS } from "../data/guideSlugs";
 import { Link } from "react-router-dom";
@@ -142,6 +143,8 @@ export function ErrorBox({ message }) {
 /** Espacio para anuncios. Va lejos del área de trabajo y del botón de descarga (política de AdSense). */
 export function AdSlot() {
   const client = import.meta.env.VITE_ADSENSE_CLIENT;
+  const pro = usePro();
+  if (pro) return null; // Pro no tiene anuncios
   return (
     <aside className="ad-slot" aria-label="Publicidad">
       <span className="ad-label">Publicidad</span>
@@ -179,7 +182,7 @@ export function Guide({ tool }) {
           ))}
           <details>
             <summary>¿Es gratis y sin límite de usos?</summary>
-            <p>Sí. Puedes usar {tool.name} las veces que quieras. En el plan gratis el límite es por archivo: {limit}.</p>
+            <p>Sí. Puedes usar {tool.name} las veces que quieras. En el plan gratis el límite es por archivo: {limit}. Pliego Pro sube esos límites y quita los anuncios.</p>
           </details>
           <details>
             <summary>¿Mis archivos se suben a internet?</summary>

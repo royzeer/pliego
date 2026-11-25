@@ -1,5 +1,6 @@
-// Worker de Pliego: sirve la página y una pequeña API de IA con Workers AI.
+// Worker de Pliego: sirve la página, una pequeña API de IA con Workers AI y los pagos de Pro.
 // Las herramientas de PDF no pasan por aquí: corren en el navegador.
+import { crearPago, verificarPago, verificarCodigo } from "./pagos.js";
 
 const MODELS = [
   "@cf/meta/llama-3.2-3b-instruct",
@@ -59,18 +60,27 @@ function buildMessages({ task, text, lang, question, history }) {
   return null;
 }
 
+const PAGOS = { "/api/pago/crear": crearPago, "/api/pago/verificar": verificarPago, "/api/pro/verificar": verificarCodigo };
+
 async function handleApi(request, env) {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/ia") return json({ error: "No encontrado." }, 404);
+  if (url.pathname !== "/api/ia" && !PAGOS[url.pathname]) return json({ error: "No encontrado." }, 404);
   if (request.method !== "POST") return json({ error: "Método no permitido." }, 405);
   const origin = request.headers.get("origin") || "";
   if (!ALLOWED.some((r) => r.test(origin))) return json({ error: "Origen no permitido." }, 403);
   const ip = request.headers.get("cf-connecting-ip") || "local";
   if (tooMany(ip)) return json({ error: "Hiciste muchas solicitudes seguidas. Espera unos minutos e intenta de nuevo." }, 429);
-  if (!env.AI) return json({ error: "La IA no está disponible en este momento." }, 503);
 
   let body;
   try { body = await request.json(); } catch { return json({ error: "Solicitud inválida." }, 400); }
+
+  if (PAGOS[url.pathname]) {
+    const necesita = url.pathname === "/api/pro/verificar" ? ["PRO_SECRET"] : ["PRO_SECRET", "MP_ACCESS_TOKEN"];
+    if (necesita.some((k) => !env[k])) return json({ error: "Los pagos de Pliego Pro todavía no están activados." }, 503);
+    return PAGOS[url.pathname](env, body, json);
+  }
+
+  if (!env.AI) return json({ error: "La IA no está disponible en este momento." }, 503);
   const messages = buildMessages(body || {});
   if (!messages) return json({ error: "Tarea no válida." }, 400);
   if (!String(body.text || "").trim()) return json({ error: "El documento no tiene texto." }, 400);

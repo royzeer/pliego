@@ -2,7 +2,7 @@ import { useState } from "react";
 import Dropzone from "../components/Dropzone";
 import Icon from "../components/Icon";
 import { FileList, Field, EngineNote, Result, Progress, ErrorBox } from "../components/Parts";
-import { FREE_LIMITS } from "../data/tools";
+import { getLimits, isPro } from "../lib/pro";
 import useTask from "./useTask";
 
 /** Herramienta estándar: archivos a la izquierda, opciones a la derecha. */
@@ -13,9 +13,10 @@ export default function GenericTool({ tool, config }) {
   const min = config.min || 1;
 
   const addFiles = (incoming) => {
-    const next = config.multiple ? [...files, ...incoming].slice(0, FREE_LIMITS.maxFilesPerTask) : incoming;
-    if (config.multiple && files.length + incoming.length > FREE_LIMITS.maxFilesPerTask) {
-      task.setError(`Puedes subir hasta ${FREE_LIMITS.maxFilesPerTask} archivos por tarea en el plan gratis.`);
+    const { maxFilesPerTask } = getLimits();
+    const next = config.multiple ? [...files, ...incoming].slice(0, maxFilesPerTask) : incoming;
+    if (config.multiple && files.length + incoming.length > maxFilesPerTask) {
+      task.setError(`Puedes subir hasta ${maxFilesPerTask} archivos por tarea${isPro() ? "" : " en el plan gratis. Con Pro, hasta 100"}.`);
     }
     setFiles(next);
     task.reset();

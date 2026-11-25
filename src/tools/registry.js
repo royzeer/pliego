@@ -3,7 +3,8 @@
 import * as P from "../lib/pdf";
 import * as E from "../lib/edit";
 import * as C from "../lib/convert";
-import { FREE_LIMITS } from "../data/tools";
+import { FREE_LIMITS, PRO_LIMITS } from "../data/tools";
+import { getLimits } from "../lib/pro";
 
 const pagesField = (label = "Páginas", placeholder = "1-3, 5, 8-10") => ({ key: "pages", type: "text", label, placeholder, help: "Separa con comas. Usa guion para rangos." });
 const paperField = { key: "paper", type: "segment", label: "Tamaño de hoja", options: [{ value: "carta", label: "Carta" }, { value: "a4", label: "A4" }, { value: "oficio", label: "Oficio" }] };
@@ -89,8 +90,8 @@ export const REGISTRY = {
   },
   "pdf-a-markdown": {
     accept: "pdf", action: "Convertir a Markdown", progress: true,
-    note: `Plan gratis: hasta ${FREE_LIMITS.markdownPages} páginas por archivo, sin límite de usos.`,
-    run: ([f], o, prog) => P.toMarkdown(f, { maxPages: FREE_LIMITS.markdownPages }, prog),
+    note: `Gratis: hasta ${FREE_LIMITS.markdownPages} páginas por archivo, sin límite de usos. Pro: hasta ${PRO_LIMITS.markdownPages}.`,
+    run: ([f], o, prog) => P.toMarkdown(f, { maxPages: getLimits().markdownPages }, prog),
   },
   "extraer-texto": {
     accept: "pdf", action: "Extraer texto", progress: true,
@@ -164,24 +165,24 @@ export const REGISTRY = {
       { key: "lang", type: "segment", label: "Idioma del documento", options: [{ value: "spa", label: "Español" }, { value: "eng", label: "Inglés" }, { value: "spa+eng", label: "Ambos" }] },
       { key: "output", type: "segment", label: "Resultado", options: [{ value: "pdf", label: "PDF buscable" }, { value: "txt", label: "Solo texto (.txt)" }] },
     ],
-    note: `Lee el texto de documentos escaneados o fotos. Plan gratis: hasta ${FREE_LIMITS.ocrPages} páginas por archivo, sin límite de usos. La primera vez descarga el lector de idioma (unos segundos).`,
-    run: ([f], o, prog) => E.ocr(f, { ...o, maxPages: FREE_LIMITS.ocrPages }, prog),
+    note: `Lee el texto de documentos escaneados o fotos. Gratis: hasta ${FREE_LIMITS.ocrPages} páginas por archivo, sin límite de usos. Pro: hasta ${PRO_LIMITS.ocrPages}. La primera vez descarga el lector de idioma (unos segundos).`,
+    run: ([f], o, prog) => E.ocr(f, { ...o, maxPages: getLimits().ocrPages }, prog),
   },
   "pdf-a-word": {
     accept: "pdf", action: "Convertir a Word", defaults: { mode: "texto" }, progress: true,
     fields: [{ key: "mode", type: "segment", label: "Tipo de Word", options: [{ value: "texto", label: "Editable" }, { value: "imagen", label: "Igual al original" }] }],
-    note: `Editable: saca el texto con títulos y párrafos para que lo cambies. Igual al original: cada página como imagen exacta. Plan gratis: hasta ${FREE_LIMITS.convertPages} páginas por archivo.`,
-    run: ([f], o, prog) => C.pdfToWord(f, { ...o, maxPages: FREE_LIMITS.convertPages }, prog),
+    note: `Editable: saca el texto con títulos y párrafos para que lo cambies. Igual al original: cada página como imagen exacta. Gratis: hasta ${FREE_LIMITS.convertPages} páginas por archivo. Pro: hasta ${PRO_LIMITS.convertPages}.`,
+    run: ([f], o, prog) => C.pdfToWord(f, { ...o, maxPages: getLimits().convertPages }, prog),
   },
   "pdf-a-powerpoint": {
     accept: "pdf", action: "Convertir a PowerPoint", progress: true,
-    note: `Cada página queda como una diapositiva. Plan gratis: hasta ${FREE_LIMITS.convertPages} páginas por archivo.`,
-    run: ([f], o, prog) => C.pdfToPowerPoint(f, { maxPages: FREE_LIMITS.convertPages }, prog),
+    note: `Cada página queda como una diapositiva. Gratis: hasta ${FREE_LIMITS.convertPages} páginas por archivo. Pro: hasta ${PRO_LIMITS.convertPages}.`,
+    run: ([f], o, prog) => C.pdfToPowerPoint(f, { maxPages: getLimits().convertPages }, prog),
   },
   "pdf-a-excel": {
     accept: "pdf", action: "Convertir a Excel", progress: true,
-    note: `Saca el texto y las tablas a una hoja por página, y convierte los números para que puedas sumar. Funciona mejor con tablas sencillas. Plan gratis: hasta ${FREE_LIMITS.convertPages} páginas.`,
-    run: ([f], o, prog) => C.pdfToExcel(f, { maxPages: FREE_LIMITS.convertPages }, prog),
+    note: `Saca el texto y las tablas a una hoja por página, y convierte los números para que puedas sumar. Funciona mejor con tablas sencillas. Gratis: hasta ${FREE_LIMITS.convertPages} páginas. Pro: hasta ${PRO_LIMITS.convertPages}.`,
+    run: ([f], o, prog) => C.pdfToExcel(f, { maxPages: getLimits().convertPages }, prog),
   },
   "pdf-a-pdfa": {
     accept: "pdf", action: "Convertir a PDF/A", defaults: { level: 2 }, progress: true,

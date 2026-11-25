@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { downloadBlob, MB } from "../lib/files";
 import { recordTask } from "../lib/stats";
-import { FREE_LIMITS } from "../data/tools";
+import { PRO_LIMITS } from "../data/tools";
+import { getLimits, isPro } from "../lib/pro";
 
 /** Maneja el ciclo de una tarea: validar, procesar, mostrar progreso y resultado. */
 export default function useTask(toolId) {
@@ -14,9 +15,12 @@ export default function useTask(toolId) {
   const run = async (files, fn) => {
     setError("");
     setResult(null);
-    const tooBig = files.find((f) => f.size > FREE_LIMITS.maxFileMB * MB);
+    const { maxFileMB } = getLimits();
+    const tooBig = files.find((f) => f.size > maxFileMB * MB);
     if (tooBig) {
-      setError(`"${tooBig.name}" pesa más de ${FREE_LIMITS.maxFileMB} MB, el máximo por archivo del plan gratis.`);
+      setError(isPro()
+        ? `"${tooBig.name}" pesa más de ${maxFileMB} MB, el máximo por archivo.`
+        : `"${tooBig.name}" pesa más de ${maxFileMB} MB, el máximo por archivo del plan gratis. Con Pro puedes subir archivos de hasta ${PRO_LIMITS.maxFileMB} MB.`);
       return;
     }
     const total = files.reduce((a, f) => a + f.size, 0);

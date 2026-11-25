@@ -5,7 +5,8 @@ import { FileList, Field, EngineNote, Progress, ErrorBox } from "../components/P
 import { summarize, translate, readPdfText, ask, toDocx } from "../lib/ai";
 import { downloadBlob } from "../lib/files";
 import { recordTask } from "../lib/stats";
-import { FREE_LIMITS } from "../data/tools";
+import { FREE_LIMITS, PRO_LIMITS } from "../data/tools";
+import { getLimits } from "../lib/pro";
 
 const AiNote = () => (
   <p className="small faint">Tu archivo no se sube: Pliego saca el texto en tu dispositivo y solo ese texto se envía a la IA de Cloudflare. La IA puede equivocarse; revisa la información importante.</p>
@@ -67,8 +68,8 @@ export function SummaryTool({ tool }) {
           </section>
         )}
       </div>
-      <Panel action="Resumir" disabled={!file} busy={task.busy} onRun={async () => setRes(await task.run((p) => summarize(file, { maxPages: FREE_LIMITS.aiPages }, p)))}>
-        <p className="small muted">Te da un resumen corto y los puntos clave del documento. Plan gratis: hasta {FREE_LIMITS.aiPages} páginas por archivo.</p>
+      <Panel action="Resumir" disabled={!file} busy={task.busy} onRun={async () => setRes(await task.run((p) => summarize(file, { maxPages: getLimits().aiPages }, p)))}>
+        <p className="small muted">Te da un resumen corto y los puntos clave del documento. Gratis: hasta {FREE_LIMITS.aiPages} páginas por archivo. Pro: hasta {PRO_LIMITS.aiPages}.</p>
       </Panel>
     </div>
   );
@@ -107,9 +108,9 @@ export function TranslateTool({ tool }) {
           </section>
         )}
       </div>
-      <Panel action="Traducir" disabled={!file} busy={task.busy} onRun={async () => setRes(await task.run((p) => translate(file, { lang, maxPages: FREE_LIMITS.aiPages }, p)))}>
+      <Panel action="Traducir" disabled={!file} busy={task.busy} onRun={async () => setRes(await task.run((p) => translate(file, { lang, maxPages: getLimits().aiPages }, p)))}>
         <Field field={{ type: "select", label: "Traducir al", options: LANGS }} value={lang} onChange={setLang} />
-        <p className="small muted">Traduce el texto página por página y te lo entrega en Word para que lo revises. Plan gratis: hasta {FREE_LIMITS.aiPages} páginas por archivo.</p>
+        <p className="small muted">Traduce el texto página por página y te lo entrega en Word para que lo revises. Gratis: hasta {FREE_LIMITS.aiPages} páginas por archivo. Pro: hasta {PRO_LIMITS.aiPages}.</p>
       </Panel>
     </div>
   );
@@ -126,7 +127,7 @@ export function ChatTool({ tool }) {
 
   const open = async ([f]) => {
     setFile(f); setMsgs([]);
-    const p = await task.run(() => readPdfText(f, FREE_LIMITS.aiPages));
+    const p = await task.run(() => readPdfText(f, getLimits().aiPages));
     if (p) setPages(p); else setFile(null);
   };
   const send = async (text) => {
@@ -169,7 +170,7 @@ export function ChatTool({ tool }) {
         {task.error && <ErrorBox message={task.error} />}
       </div>
       <Panel>
-        <p className="small muted">Sube un PDF y hazle preguntas: fechas, valores, requisitos o un resumen de una parte. Plan gratis: documentos de hasta {FREE_LIMITS.aiPages} páginas.</p>
+        <p className="small muted">Sube un PDF y hazle preguntas: fechas, valores, requisitos o un resumen de una parte. Gratis: documentos de hasta {FREE_LIMITS.aiPages} páginas. Pro: hasta {PRO_LIMITS.aiPages}.</p>
       </Panel>
     </div>
   );

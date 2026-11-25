@@ -1,6 +1,8 @@
 import { PDFDocument, StandardFonts, rgb, degrees } from "@cantoo/pdf-lib";
 import { readBytes, formatSize, parseRanges, flatPages, zipBlob, pdfBlob, baseName, canvasToBlob, loadImage } from "./files";
 import { openPdf, renderPage, closePdf } from "./render";
+import { pagesError } from "./pro";
+import { PRO_LIMITS } from "../data/tools";
 
 // Tamaños de hoja en puntos (1 pt = 1/72 pulgada)
 export const PAPER = {
@@ -457,7 +459,7 @@ export async function toMarkdown(file, { maxPages }, onProgress) {
   const doc = await openPdf(await readBytes(file));
   if (doc.numPages > maxPages) {
     await closePdf(doc);
-    throw new Error(`El plan gratis convierte hasta ${maxPages} páginas por archivo y este tiene ${doc.numPages}. Divide el PDF o pásate a Pro.`);
+    throw new Error(pagesError("Puedes convertir", maxPages, doc.numPages, PRO_LIMITS.markdownPages));
   }
   const all = [];
   for (let i = 1; i <= doc.numPages; i++) {

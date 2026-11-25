@@ -3,6 +3,8 @@
 import { PDFDocument, StandardFonts, rgb, degrees, PDFTextField, PDFCheckBox, PDFDropdown, PDFOptionList, PDFRadioGroup } from "@cantoo/pdf-lib";
 import { readBytes, pdfBlob, baseName, canvasToBlob } from "./files";
 import { openPdf, renderPage, closePdf } from "./render";
+import { pagesError } from "./pro";
+import { PRO_LIMITS } from "../data/tools";
 
 const hexToRgb = (hex = "#000000") => {
   const n = parseInt(hex.replace("#", ""), 16);
@@ -237,7 +239,7 @@ export async function ocr(file, { lang, maxPages, output }, onProgress) {
   const pdfjsDoc = await openPdf(bytes);
   if (pdfjsDoc.numPages > maxPages) {
     await closePdf(pdfjsDoc);
-    throw new Error(`El plan gratis hace OCR de hasta ${maxPages} páginas por archivo y este tiene ${pdfjsDoc.numPages}. Divide el PDF primero.`);
+    throw new Error(pagesError("El OCR lee", maxPages, pdfjsDoc.numPages, PRO_LIMITS.ocrPages));
   }
   onProgress?.(0, 0, "Cargando el lector de texto (la primera vez tarda un poco)…");
   const { createWorker } = await import("tesseract.js");

@@ -2,6 +2,8 @@
 // (nunca el archivo) se envía a la IA de Cloudflare para procesarlo.
 import { readBytes, baseName } from "./files";
 import { openPdf, closePdf } from "./render";
+import { pagesError } from "./pro";
+import { PRO_LIMITS } from "../data/tools";
 
 const CHUNK = 12000;
 
@@ -22,7 +24,7 @@ export async function readPdfText(file, maxPages) {
   const doc = await openPdf(await readBytes(file));
   if (doc.numPages > maxPages) {
     await closePdf(doc);
-    throw new Error(`El plan gratis usa IA con hasta ${maxPages} páginas por archivo y este tiene ${doc.numPages}. Divide el PDF primero.`);
+    throw new Error(pagesError("La IA trabaja con", maxPages, doc.numPages, PRO_LIMITS.aiPages));
   }
   const pages = [];
   for (let i = 1; i <= doc.numPages; i++) {

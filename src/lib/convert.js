@@ -4,11 +4,13 @@ import { PDFDocument } from "@cantoo/pdf-lib";
 import { readBytes, pdfBlob, baseName, canvasToBlob } from "./files";
 import { openPdf, renderPage, closePdf } from "./render";
 import { PAPER } from "./pdf";
+import { pagesError } from "./pro";
+import { PRO_LIMITS } from "../data/tools";
 
 const limitPages = async (doc, max) => {
   if (doc.numPages > max) {
     await closePdf(doc);
-    throw new Error(`El plan gratis convierte hasta ${max} páginas por archivo y este tiene ${doc.numPages}. Divide el PDF primero.`);
+    throw new Error(pagesError("Puedes convertir", max, doc.numPages, PRO_LIMITS.convertPages));
   }
 };
 

@@ -95,6 +95,16 @@ export const FREE_LIMITS = {
   aiPages: 20,
 };
 
+// Límites de Pliego Pro.
+export const PRO_LIMITS = {
+  maxFileMB: 500,
+  maxFilesPerTask: 100,
+  markdownPages: 1000,
+  ocrPages: 300,
+  convertPages: 500,
+  aiPages: 100,
+};
+
 export const TRAMITES = [
   { id: "empleo", name: "Hoja de vida para empleo", tag: "Empleo", tool: "paquete-documentos", desc: "Hoja de vida, cédula, diplomas y certificados en un PDF ordenado." },
   { id: "cedula", name: "Cédula por ambas caras", tag: "Gobierno", tool: "cedula-ambas-caras", desc: "La forma que piden bancos, EPS y universidades." },

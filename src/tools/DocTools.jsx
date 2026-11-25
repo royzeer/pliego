@@ -5,6 +5,8 @@ import { SignatureMaker } from "./EditTools";
 import { cuentaDeCobro, derechoDePeticion, calcLiquidacion, liquidacionPdf, pesos, pesosEnLetras, SMLMV_2026, AUX_TRANSPORTE_2026 } from "../lib/docs";
 import { downloadBlob } from "../lib/files";
 import { recordTask } from "../lib/stats";
+import { isPro, usePro } from "../lib/pro";
+import { Link } from "react-router-dom";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -14,9 +16,10 @@ function useSaved(key, initial) {
     try { return { ...initial, ...JSON.parse(localStorage.getItem(key) || "{}") }; } catch { return initial; }
   });
   useEffect(() => {
+    // En Pro también se guarda la firma; en el plan gratis solo los datos de texto.
     const { firma, ...rest } = data;
-    void firma;
-    try { localStorage.setItem(key, JSON.stringify(rest)); } catch { /* sin almacenamiento */ }
+    const toSave = isPro() && firma ? { ...rest, firma } : rest;
+    try { localStorage.setItem(key, JSON.stringify(toSave)); } catch { /* sin almacenamiento */ }
   }, [key, data]);
   return [data, setData];
 }
@@ -75,6 +78,43 @@ const Out = ({ task, onReset }) => (
   </>
 );
 
+// Clientes guardados (Pro) para la cuenta de cobro.
+const CLIENT_KEY = "pliego.clientes";
+const CLIENT_FIELDS = ["cliente", "clienteId", "concepto", "valor"];
+const readClients = () => { try { return JSON.parse(localStorage.getItem(CLIENT_KEY)) || []; } catch { return []; } };
+const writeClients = (l) => { try { localStorage.setItem(CLIENT_KEY, JSON.stringify(l)); } catch { /* sin espacio */ } };
+
+function SavedClients({ d, setD }) {
+  const pro = usePro();
+  const [list, setList] = useState(readClients);
+  if (!pro) {
+    return <p className="small muted">Con <Link to="/planes" style={{ textDecoration: "underline" }}>Pliego Pro</Link> guardas tus clientes y tu firma para hacer cada cuenta de cobro en segundos.</p>;
+  }
+  const save = () => {
+    if (!d.cliente?.trim()) return;
+    const item = Object.fromEntries(CLIENT_FIELDS.map((k) => [k, d[k] || ""]));
+    const l = [item, ...list.filter((c) => c.cliente !== item.cliente)].slice(0, 30);
+    writeClients(l); setList(l);
+  };
+  const remove = (name) => { const l = list.filter((c) => c.cliente !== name); writeClients(l); setList(l); };
+  return (
+    <div className="field">
+      <label>Clientes guardados</label>
+      {list.length > 0 && (
+        <div className="chips">
+          {list.map((c) => (
+            <span key={c.cliente} className="chip" style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
+              <button type="button" onClick={() => setD({ ...d, ...c })} style={{ background: "none", border: 0, color: "inherit", cursor: "pointer", font: "inherit" }}>{c.cliente}</button>
+              <button type="button" onClick={() => remove(c.cliente)} aria-label={`Borrar ${c.cliente}`} style={{ background: "none", border: 0, color: "inherit", cursor: "pointer", display: "grid" }}><Icon name="IconX" size={13} /></button>
+            </span>
+          ))}
+        </div>
+      )}
+      <button type="button" className="btn" disabled={!d.cliente?.trim()} onClick={save}><Icon name="IconPlus" size={16} /> Guardar este cliente</button>
+    </div>
+  );
+}
+
 // ------------------------------------------------------------ Cuenta de cobro
 export function CuentaCobroTool({ tool }) {
   const [d, setD] = useSaved("pliego.cuenta", { ciudad: "Santa Marta", fecha: today(), numero: "001", tipoCuenta: "cuenta de ahorros", noIva: true });
@@ -119,6 +159,7 @@ export function CuentaCobroTool({ tool }) {
       </div>
       <aside className="panel">
         <h2 style={{ fontSize: 17 }}>Opciones</h2>
+        <SavedClients d={d} setD={setD} />
         <Field field={{ type: "check", label: "Incluir nota de no responsable de IVA" }} value={d.noIva} onChange={set("noIva")} />
         <Firma data={d} set={setD} />
         <button className="btn btn-primary btn-lg" disabled={task.busy} onClick={() => task.run(() => cuentaDeCobro(d))}>

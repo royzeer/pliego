@@ -179,6 +179,6 @@ ${urls.map((u) => `  <url><loc>${u.url}</loc><lastmod>${today}</lastmod><priorit
 </urlset>
 `;
 fs.writeFileSync(path.join(DIST, "sitemap.xml"), sitemap);
-fs.writeFileSync(path.join(DIST, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
+fs.writeFileSync(path.join(DIST, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /pro/\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 
 console.log(`Páginas generadas: ${urls.length}. Sitemap: ${SITE.url}/sitemap.xml`);

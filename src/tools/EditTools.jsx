@@ -5,6 +5,8 @@ import PageEditor, { newId, textBox } from "../components/PageEditor";
 import { FileList, Field, EngineNote, Result, Progress, ErrorBox } from "../components/Parts";
 import { loadPagesForEditor, applyOverlays, redact, findTextBoxes, readForm, fillForm, extractPagesText } from "../lib/edit";
 import useTask from "./useTask";
+import { usePro } from "../lib/pro";
+import { Link } from "react-router-dom";
 
 const Panel = ({ title = "Opciones", children, action, disabled, onRun, busy }) => (
   <aside className="panel">
@@ -79,7 +81,49 @@ const photoToSignature = async (file) => {
   return trimCanvas(c);
 };
 
-export function SignatureMaker({ onCreate }) {
+// Firmas guardadas (Pro): se quedan en este navegador para reusarlas.
+const SIG_KEY = "pliego.firmas";
+const readSigs = () => { try { return JSON.parse(localStorage.getItem(SIG_KEY)) || []; } catch { return []; } };
+const writeSigs = (l) => { try { localStorage.setItem(SIG_KEY, JSON.stringify(l)); } catch { /* sin espacio */ } };
+
+function SavedSignatures({ onUse }) {
+  const pro = usePro();
+  const [list, setList] = useState(readSigs);
+  useEffect(() => {
+    const fn = () => setList(readSigs());
+    window.addEventListener("pliego-firmas", fn);
+    return () => window.removeEventListener("pliego-firmas", fn);
+  }, []);
+  if (!pro) {
+    return <p className="small muted">Con <Link to="/planes" style={{ textDecoration: "underline" }}>Pliego Pro</Link> tus firmas quedan guardadas para usarlas con un toque.</p>;
+  }
+  if (!list.length) return <p className="small muted">Las firmas que crees quedan guardadas aquí (hasta 5).</p>;
+  const remove = (i) => { const l = list.filter((_, k) => k !== i); writeSigs(l); setList(l); };
+  return (
+    <div className="field">
+      <label>Tus firmas guardadas</label>
+      <div className="saved-sigs">
+        {list.map((sig, i) => (
+          <div key={i} className="saved-sig">
+            <button type="button" onClick={() => onUse(sig)} aria-label="Usar esta firma"><img src={sig.url} alt="Firma guardada" /></button>
+            <button type="button" className="icon-btn" onClick={() => remove(i)} aria-label="Borrar firma"><Icon name="IconTrash" size={14} /></button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function SignatureMaker({ onCreate: onCreateRaw }) {
+  const pro = usePro();
+  const onCreate = (sig) => {
+    if (pro) {
+      const l = readSigs().filter((x) => x.url !== sig.url);
+      writeSigs([sig, ...l].slice(0, 5));
+      window.dispatchEvent(new Event("pliego-firmas"));
+    }
+    onCreateRaw(sig);
+  };
   const [mode, setMode] = useState("dibujar");
   const [name, setName] = useState("");
   const [color, setColor] = useState("#111827");
@@ -126,6 +170,7 @@ export function SignatureMaker({ onCreate }) {
 
   return (
     <div className="stack" style={{ gap: 12 }}>
+      <SavedSignatures onUse={onCreateRaw} />
       <Field field={{ type: "segment", label: "Tu firma", options: [{ value: "dibujar", label: "Dibujar" }, { value: "escribir", label: "Escribir" }, { value: "foto", label: "Foto" }] }} value={mode} onChange={setMode} />
       {mode === "dibujar" && (
         <>
