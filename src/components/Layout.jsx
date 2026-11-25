@@ -3,6 +3,7 @@ import { NavLink, Link, Outlet, useNavigate } from "react-router-dom";
 import Icon from "./Icon";
 import { TOOLS } from "../data/tools";
 import { getTheme, setTheme } from "../lib/stats";
+import { InstallBanner } from "./Install";
 
 const NAV = [
   { to: "/", icon: "IconHome", label: "Inicio", end: true },
@@ -101,11 +102,13 @@ export default function Layout() {
           </div>
         </nav>
         <main className="main">
+          <InstallBanner />
           <Outlet />
           <footer className="footer">
             <span>© {new Date().getFullYear()} Pliego · Tus archivos se procesan en tu dispositivo</span>
             <nav>
               <Link to="/herramientas">Herramientas</Link>
+              <Link to="/instalar">Instalar app</Link>
               <Link to="/acerca">Acerca de</Link>
               <Link to="/contacto">Contacto</Link>
               <Link to="/privacidad">Privacidad</Link>

@@ -9,3 +9,8 @@ createRoot(document.getElementById("root")).render(
     <App />
   </StrictMode>,
 );
+
+// Registra el service worker para poder instalar Pliego como app y usarlo sin internet.
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+}
