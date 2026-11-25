@@ -4,7 +4,7 @@ import Icon from "./Icon";
 import { TOOLS } from "../data/tools";
 import { getTheme, setTheme } from "../lib/stats";
 import { InstallBanner } from "./Install";
-import { usePro } from "../lib/pro";
+import { usePro, useUser } from "../lib/pro";
 
 const NAV = [
   { to: "/", icon: "IconHome", label: "Inicio", end: true },
@@ -61,6 +61,7 @@ function Search() {
 
 export function TopBar({ title, subtitle }) {
   const pro = usePro();
+  const user = useUser();
   const [theme, setT] = useState(getTheme());
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -76,6 +77,9 @@ export function TopBar({ title, subtitle }) {
       <button className="icon-btn" onClick={() => setT(theme === "dark" ? "light" : "dark")} aria-label="Cambiar tema">
         <Icon name={theme === "dark" ? "IconSun" : "IconMoon"} size={18} />
       </button>
+      <Link to="/cuenta" className="icon-btn" aria-label={user ? "Mi cuenta" : "Entrar o crear cuenta"} title={user ? user.correo : "Entrar o crear cuenta"}>
+        <Icon name="IconUser" size={18} />
+      </Link>
       <Link to="/planes" className="btn btn-primary" title={pro ? "Tienes Pliego Pro" : "Ver planes"}>{pro ? <><Icon name="IconCrown" size={16} /> Pro</> : "Pro"}</Link>
     </header>
   );

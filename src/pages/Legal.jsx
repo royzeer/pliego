@@ -62,27 +62,31 @@ export function Privacidad() {
         <p>Las herramientas de inteligencia artificial (Resumir, Traducir y Pregúntale al PDF) tampoco suben tu archivo: Pliego saca el texto en tu dispositivo y solo ese texto se envía a Workers AI de Cloudflare para generar la respuesta. Pliego no guarda ese texto ni las respuestas.</p>
 
         <h2>3. Datos que se guardan en tu navegador</h2>
-        <p>Pliego guarda en el almacenamiento local de tu navegador (localStorage) datos que nunca salen de tu dispositivo: el tema claro u oscuro, las herramientas que usaste hace poco, estadísticas de uso como el número de archivos procesados, los datos que escribes en las plantillas para no volver a escribirlos y, si tienes Pro, tu código de activación, tus firmas y tus clientes guardados. Puedes borrarlos cuando quieras desde la configuración de tu navegador.</p>
+        <p>Pliego guarda en el almacenamiento local de tu navegador (localStorage) datos que nunca salen de tu dispositivo: el tema claro u oscuro, las herramientas que usaste hace poco, estadísticas de uso como el número de archivos procesados, los datos que escribes en las plantillas para no volver a escribirlos y, una copia de los datos de tu cuenta (correo y plan) y, si tienes Pro, tus firmas y tus clientes guardados. Puedes borrarlos cuando quieras desde la configuración de tu navegador.</p>
 
         <h2>4. Publicidad y cookies de terceros</h2>
         <p>Pliego puede mostrar anuncios de Google AdSense para mantenerse gratis. Proveedores externos, incluido Google, usan cookies para mostrar anuncios basados en las visitas anteriores del usuario a este sitio web u otros sitios web.</p>
         <p>Las cookies de publicidad permiten que Google y sus socios muestren anuncios a los usuarios en función de sus visitas a este sitio o a otros sitios de internet. Puedes desactivar la publicidad personalizada en la <a href="https://adssettings.google.com" target="_blank" rel="noreferrer">configuración de anuncios de Google</a>, o desactivar las cookies de otros proveedores en <a href="https://www.aboutads.info/choices" target="_blank" rel="noreferrer">www.aboutads.info</a>.</p>
         <p>Más información sobre cómo usa Google los datos: <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noreferrer">policies.google.com/technologies/partner-sites</a>.</p>
 
-        <h2>5. Estadísticas de visitas</h2>
+        <h2>5. Tu cuenta</h2>
+        <p>Crear una cuenta es opcional y solo se necesita para Pliego Pro. Si creas una, guardamos tu correo, la fecha en que la creaste, tu plan y, si tienes Pro, tus firmas y clientes guardados. Tu contraseña se cifra en tu propio dispositivo antes de enviarse y en nuestra base de datos solo queda una huella cifrada que no permite recuperarla.</p>
+        <p>Usamos tu correo solo para tu cuenta: entrar, restablecer la contraseña y temas de tus pagos. Para iniciar sesión usamos una cookie propia y necesaria, que no sirve para publicidad. Puedes borrar tu cuenta cuando quieras desde Mi cuenta.</p>
+
+        <h2>6. Estadísticas de visitas</h2>
         <p>Podemos usar herramientas de medición (como las estadísticas de Cloudflare) para saber cuántas personas visitan el sitio y qué páginas usan. Esa información es agregada y no incluye el contenido de tus archivos.</p>
 
-        <h2>6. Pagos</h2>
+        <h2>7. Pagos</h2>
         <p>Los pagos de Pliego Pro se hacen en Mercado Pago. Tus datos de pago (tarjeta, cuenta bancaria, correo) los recibe y trata Mercado Pago según su propia política de privacidad; Pliego no los ve ni los guarda.</p>
-        <p>Para activar Pro, el servidor de Pliego consulta a Mercado Pago si el pago fue aprobado y crea un código de activación con el plan y la fecha de vencimiento. Pliego no guarda una base de datos de compradores.</p>
+        <p>Para activar Pro, el servidor de Pliego consulta a Mercado Pago si el pago fue aprobado y guarda el número de la operación, el plan, el valor y la fecha, ligados a tu cuenta.</p>
 
-        <h2>7. Tus derechos</h2>
-        <p>De acuerdo con la Ley 1581 de 2012 de Colombia, puedes conocer, actualizar, rectificar y pedir que se borren tus datos personales escribiendo a {SITE.email}.</p>
+        <h2>8. Tus derechos</h2>
+        <p>De acuerdo con la Ley 1581 de 2012 de Colombia, puedes conocer, actualizar, rectificar y pedir que se borren tus datos personales escribiendo a {SITE.email}. También puedes borrar tu cuenta tú mismo desde Mi cuenta.</p>
 
-        <h2>8. Menores de edad</h2>
+        <h2>9. Menores de edad</h2>
         <p>Pliego no está dirigido a menores de 13 años ni recopila intencionalmente sus datos.</p>
 
-        <h2>9. Cambios</h2>
+        <h2>10. Cambios</h2>
         <p>Si cambiamos esta política, publicaremos la nueva versión en esta página con su fecha de actualización.</p>
       </Doc>
     </>
@@ -109,8 +113,8 @@ export function Terminos() {
         <p>El plan gratis puede mostrar anuncios. Pliego Pro no los muestra.</p>
         <h2>7. Pliego Pro</h2>
         <p>Pliego Pro cuesta $9.900 por 30 días o $99.000 por 365 días, en pesos colombianos. Es un pago único hecho en Mercado Pago: no es una suscripción y no se renueva solo. Pro empieza el día en que Mercado Pago aprueba el pago.</p>
-        <p>Al pagar recibes un código de activación personal para usar Pro en tus propios dispositivos. No lo compartas ni lo publiques: si detectamos que un código se usa de forma abusiva, podemos desactivarlo.</p>
-        <p>Pro sube los límites por archivo, quita los anuncios y guarda tus firmas y clientes en tu navegador. Los límites exactos están en la página de Planes. Si borras los datos del navegador, vuelve a activar Pro con tu código.</p>
+        <p>Para comprar Pro necesitas una cuenta de Pliego. Pro queda ligado a esa cuenta: lo usas entrando con tu correo en tus propios dispositivos. La cuenta es personal; no compartas tu contraseña. Si compras otro plan antes de que se venza, los días se suman.</p>
+        <p>Pro sube los límites por archivo, quita los anuncios y guarda tus firmas y clientes en tu cuenta. Los límites exactos están en la página de Planes.</p>
         <p>Si tienes un problema con tu pago o con Pro, escríbenos a {SITE.email} con el número de la operación de Mercado Pago y lo revisamos.</p>
         <h2>8. Cambios</h2>
         <p>Podemos actualizar estos términos. La versión vigente siempre estará en esta página.</p>

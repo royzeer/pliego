@@ -5,7 +5,7 @@ import PageEditor, { newId, textBox } from "../components/PageEditor";
 import { FileList, Field, EngineNote, Result, Progress, ErrorBox } from "../components/Parts";
 import { loadPagesForEditor, applyOverlays, redact, findTextBoxes, readForm, fillForm, extractPagesText } from "../lib/edit";
 import useTask from "./useTask";
-import { usePro } from "../lib/pro";
+import { usePro, readProData, saveProData, KEYS } from "../lib/pro";
 import { Link } from "react-router-dom";
 
 const Panel = ({ title = "Opciones", children, action, disabled, onRun, busy }) => (
@@ -82,9 +82,8 @@ const photoToSignature = async (file) => {
 };
 
 // Firmas guardadas (Pro): se quedan en este navegador para reusarlas.
-const SIG_KEY = "pliego.firmas";
-const readSigs = () => { try { return JSON.parse(localStorage.getItem(SIG_KEY)) || []; } catch { return []; } };
-const writeSigs = (l) => { try { localStorage.setItem(SIG_KEY, JSON.stringify(l)); } catch { /* sin espacio */ } };
+const readSigs = () => readProData(KEYS.firmas);
+const writeSigs = (l) => saveProData(KEYS.firmas, l);
 
 function SavedSignatures({ onUse }) {
   const pro = usePro();
@@ -95,7 +94,7 @@ function SavedSignatures({ onUse }) {
     return () => window.removeEventListener("pliego-firmas", fn);
   }, []);
   if (!pro) {
-    return <p className="small muted">Con <Link to="/planes" style={{ textDecoration: "underline" }}>Pliego Pro</Link> tus firmas quedan guardadas para usarlas con un toque.</p>;
+    return <p className="small muted">Con <Link to="/planes" style={{ textDecoration: "underline" }}>Pliego Pro</Link> tus firmas quedan guardadas en tu cuenta para usarlas con un toque, en cualquier dispositivo.</p>;
   }
   if (!list.length) return <p className="small muted">Las firmas que crees quedan guardadas aquí (hasta 5).</p>;
   const remove = (i) => { const l = list.filter((_, k) => k !== i); writeSigs(l); setList(l); };

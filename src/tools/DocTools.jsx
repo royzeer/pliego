@@ -5,7 +5,7 @@ import { SignatureMaker } from "./EditTools";
 import { cuentaDeCobro, derechoDePeticion, calcLiquidacion, liquidacionPdf, pesos, pesosEnLetras, SMLMV_2026, AUX_TRANSPORTE_2026 } from "../lib/docs";
 import { downloadBlob } from "../lib/files";
 import { recordTask } from "../lib/stats";
-import { isPro, usePro } from "../lib/pro";
+import { isPro, usePro, readProData, saveProData, KEYS } from "../lib/pro";
 import { Link } from "react-router-dom";
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -79,10 +79,9 @@ const Out = ({ task, onReset }) => (
 );
 
 // Clientes guardados (Pro) para la cuenta de cobro.
-const CLIENT_KEY = "pliego.clientes";
 const CLIENT_FIELDS = ["cliente", "clienteId", "concepto", "valor"];
-const readClients = () => { try { return JSON.parse(localStorage.getItem(CLIENT_KEY)) || []; } catch { return []; } };
-const writeClients = (l) => { try { localStorage.setItem(CLIENT_KEY, JSON.stringify(l)); } catch { /* sin espacio */ } };
+const readClients = () => readProData(KEYS.clientes);
+const writeClients = (l) => saveProData(KEYS.clientes, l);
 
 function SavedClients({ d, setD }) {
   const pro = usePro();

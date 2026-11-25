@@ -9,7 +9,8 @@ import NotFound from "./pages/NotFound";
 import { Acerca, Contacto, Privacidad, Terminos } from "./pages/Legal";
 import Instalar from "./pages/Instalar";
 import Activar from "./pages/Activar";
-import { recheckPro } from "./lib/pro";
+import { refreshUser } from "./lib/pro";
+import { Cuenta, Restablecer } from "./pages/Cuenta";
 
 // Las herramientas cargan las librerías de PDF solo cuando se abren.
 const ToolPage = lazy(() => import("./pages/ToolPage"));
@@ -18,7 +19,7 @@ const GuiaPage = lazy(() => import("./pages/Guias").then((m) => ({ default: m.Gu
 const Loading = () => <div className="card muted">Cargando herramienta…</div>;
 
 export default function App() {
-  useEffect(() => { recheckPro(); }, []);
+  useEffect(() => { refreshUser(); }, []);
   return (
     <BrowserRouter>
       <Routes>
@@ -31,6 +32,8 @@ export default function App() {
           <Route path="/tramites" element={<Tramites />} />
           <Route path="/planes" element={<Planes />} />
           <Route path="/pro/activar" element={<Activar />} />
+          <Route path="/cuenta" element={<Cuenta />} />
+          <Route path="/cuenta/restablecer" element={<Restablecer />} />
           <Route path="/instalar" element={<Instalar />} />
           <Route path="/acerca" element={<Acerca />} />
           <Route path="/contacto" element={<Contacto />} />

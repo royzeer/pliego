@@ -357,3 +357,7 @@
 /* Pliego Pro */
 .pro-status h2 { display: flex; align-items: center; gap: 8px; font-size: 18px; }
 .pro-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; word-break: break-all; background: rgba(0,0,0,.06); border-radius: 12px; padding: 10px 12px; margin: 10px 0 12px; user-select: all; }
+
+/* Cuenta */
+.auth-card { max-width: 480px; }
+.link-btn { background: none; border: 0; padding: 0; color: var(--text); text-decoration: underline; cursor: pointer; font: inherit; }

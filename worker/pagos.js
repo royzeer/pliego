@@ -1,49 +1,17 @@
-// Pagos de Pliego Pro con Mercado Pago (Checkout Pro).
-// No hay base de datos de usuarios: cuando un pago se aprueba, el Worker lo confirma
-// directamente con Mercado Pago y entrega un código de activación firmado con PRO_SECRET.
-// Secretos que se configuran en Cloudflare: MP_ACCESS_TOKEN y PRO_SECRET.
+// Pagos de Pliego Pro con Mercado Pago (Checkout Pro), ligados a la cuenta.
+// Cada pago lleva en external_reference el id de la cuenta. Cuando Mercado Pago lo aprueba,
+// el Worker lo confirma directamente con la API de Mercado Pago, lo registra una sola vez
+// en la tabla pagos y extiende el Pro de esa cuenta.
+// Secretos en Cloudflare: MP_ACCESS_TOKEN y PRO_SECRET. Base de datos: DB (D1).
+import { SITE, currentUser, publicUser } from "./cuentas.js";
 
 export const PLANES = {
   mensual: { precio: 9900, dias: 30, titulo: "Pliego Pro - 1 mes" },
   anual: { precio: 99000, dias: 365, titulo: "Pliego Pro - 1 año" },
 };
 
-const SITE = "https://pliego.lat";
 const MP_API = "https://api.mercadopago.com";
-const enc = new TextEncoder();
-
-const b64url = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-const fromB64url = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4)), (c) => c.charCodeAt(0));
-
-async function hmac(secret, data) {
-  const key = await crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(data));
-  return b64url(sig).slice(0, 32);
-}
-
-/** Crea el código de activación: datos + firma. */
-export async function firmarCodigo(secret, { plan, exp, pago }) {
-  const body = b64url(enc.encode(JSON.stringify({ p: plan, e: exp, i: String(pago) })));
-  return `${body}.${await hmac(secret, body)}`;
-}
-
-/** Comprueba un código. Devuelve { plan, exp, pago } o null si es falso o está vencido. */
-export async function leerCodigo(secret, codigo) {
-  const [body, sig] = String(codigo || "").trim().split(".");
-  if (!body || !sig) return null;
-  const esperado = await hmac(secret, body);
-  if (esperado.length !== sig.length) return null;
-  let diff = 0;
-  for (let i = 0; i < sig.length; i++) diff |= sig.charCodeAt(i) ^ esperado.charCodeAt(i);
-  if (diff) return null;
-  try {
-    const d = JSON.parse(new TextDecoder().decode(fromB64url(body)));
-    if (!PLANES[d.p] || !(d.e > Date.now())) return null;
-    return { plan: d.p, exp: d.e, pago: d.i };
-  } catch {
-    return null;
-  }
-}
+const DAY = 86400_000;
 
 async function mp(env, path, init = {}) {
   const res = await fetch(MP_API + path, {
@@ -54,54 +22,85 @@ async function mp(env, path, init = {}) {
   return { ok: res.ok, status: res.status, data };
 }
 
-/** POST /api/pago/crear { plan } -> { url } para mandar a la persona a pagar. */
-export async function crearPago(env, body, json) {
+/** POST /api/pago/crear { plan } -> { url } para mandar a la persona a pagar. Necesita sesión. */
+export async function crearPago(env, request, body, json) {
   const plan = PLANES[body?.plan];
   if (!plan) return json({ error: "Plan no válido." }, 400);
-  const referencia = `pliego:${body.plan}:${crypto.randomUUID()}`;
+  const u = await currentUser(env, request);
+  if (!u) return json({ error: "Inicia sesión o crea tu cuenta para comprar Pro.", cuenta: true }, 401);
+  const idem = crypto.randomUUID();
   const { ok, data } = await mp(env, "/checkout/preferences", {
     method: "POST",
-    headers: { "x-idempotency-key": referencia },
+    headers: { "x-idempotency-key": idem },
     body: JSON.stringify({
       items: [{ id: `pro-${body.plan}`, title: plan.titulo, quantity: 1, unit_price: plan.precio, currency_id: "COP" }],
-      external_reference: referencia,
+      payer: { email: u.correo },
+      external_reference: `pliego:${body.plan}:${u.id}`,
       back_urls: { success: `${SITE}/pro/activar`, pending: `${SITE}/pro/activar`, failure: `${SITE}/planes?pago=rechazado` },
       auto_return: "approved",
+      notification_url: `${SITE}/api/pago/aviso`,
       statement_descriptor: "PLIEGO",
-      binary_mode: false,
     }),
   });
   if (!ok || !data.init_point) return json({ error: "No pudimos abrir el pago. Intenta de nuevo en un momento." }, 502);
   return json({ url: data.init_point });
 }
 
-/** POST /api/pago/verificar { pago } -> { codigo, plan, exp } si Mercado Pago confirma que se aprobó. */
-export async function verificarPago(env, body, json) {
-  const id = String(body?.pago || "").replace(/\D/g, "");
-  if (!id) return json({ error: "Falta el número del pago." }, 400);
+/**
+ * Consulta un pago en Mercado Pago y, si está aprobado y es de Pliego, lo aplica a la cuenta.
+ * Es idempotente: el mismo pago nunca suma días dos veces.
+ */
+export async function aplicarPago(env, pagoId) {
+  const id = String(pagoId || "").replace(/\D/g, "");
+  if (!id) return { status: 400, error: "Falta el número del pago." };
   const { ok, status, data } = await mp(env, `/v1/payments/${id}`);
-  if (status === 404) return json({ error: "No encontramos ese pago en Mercado Pago." }, 404);
-  if (!ok) return json({ error: "No pudimos consultar el pago. Intenta de nuevo en un momento." }, 502);
+  if (status === 404) return { status: 404, error: "No encontramos ese pago en Mercado Pago." };
+  if (!ok) return { status: 502, error: "No pudimos consultar el pago. Intenta de nuevo en un momento." };
 
-  const [marca, nombrePlan] = String(data.external_reference || "").split(":");
+  const [marca, nombrePlan, usuarioId] = String(data.external_reference || "").split(":");
   const plan = PLANES[nombrePlan];
-  if (marca !== "pliego" || !plan) return json({ error: "Ese pago no corresponde a Pliego Pro." }, 400);
-  if (data.status === "pending" || data.status === "in_process") {
-    return json({ estado: "pendiente", mensaje: "Tu pago está en proceso. Cuando Mercado Pago lo apruebe, vuelve a abrir el enlace de activación." });
+  if (marca !== "pliego" || !plan || !usuarioId) return { status: 400, error: "Ese pago no corresponde a Pliego Pro." };
+  if (data.status === "pending" || data.status === "in_process" || data.status === "authorized") {
+    return { status: 200, estado: "pendiente", mensaje: "Tu pago está en proceso. Cuando Mercado Pago lo apruebe, Pro se activa solo en tu cuenta." };
   }
-  if (data.status !== "approved") return json({ error: "Ese pago no fue aprobado." }, 402);
-  if (data.currency_id !== "COP" || Number(data.transaction_amount) < plan.precio) return json({ error: "El valor del pago no coincide con el plan." }, 400);
+  if (data.status !== "approved") return { status: 402, error: "Ese pago no fue aprobado." };
+  if (data.currency_id !== "COP" || Number(data.transaction_amount) < plan.precio) return { status: 400, error: "El valor del pago no coincide con el plan." };
 
-  const aprobado = Date.parse(data.date_approved || data.date_created) || Date.now();
-  const exp = aprobado + plan.dias * 24 * 60 * 60 * 1000;
-  if (exp <= Date.now()) return json({ error: "Este pago ya venció. Puedes comprar un plan nuevo." }, 410);
-  const codigo = await firmarCodigo(env.PRO_SECRET, { plan: nombrePlan, exp, pago: id });
-  return json({ estado: "aprobado", codigo, plan: nombrePlan, exp });
+  const ya = await env.DB.prepare("SELECT usuario FROM pagos WHERE id = ?").bind(id).first();
+  if (!ya) {
+    const u = await env.DB.prepare("SELECT id, pro_hasta FROM usuarios WHERE id = ?").bind(usuarioId).first();
+    if (!u) return { status: 404, error: "La cuenta de ese pago ya no existe. Escríbenos a hola@pliego.lat." };
+    const aprobado = Date.parse(data.date_approved || data.date_created) || Date.now();
+    const desde = Math.max(aprobado, u.pro_hasta || 0);
+    const hasta = desde + plan.dias * DAY;
+    // INSERT OR IGNORE + condición: si dos avisos llegan a la vez, solo uno suma los días.
+    const ins = await env.DB.prepare("INSERT OR IGNORE INTO pagos (id, usuario, plan, valor, aprobado) VALUES (?, ?, ?, ?, ?)")
+      .bind(id, usuarioId, nombrePlan, Math.round(Number(data.transaction_amount)), aprobado).run();
+    if (ins.meta?.changes) {
+      await env.DB.prepare("UPDATE usuarios SET pro_plan = ?, pro_hasta = ? WHERE id = ?").bind(nombrePlan, hasta, usuarioId).run();
+    }
+  }
+  return { status: 200, estado: "aprobado", usuarioId };
 }
 
-/** POST /api/pro/verificar { codigo } -> { ok, plan, exp } */
-export async function verificarCodigo(env, body, json) {
-  const d = await leerCodigo(env.PRO_SECRET, body?.codigo);
-  if (!d) return json({ ok: false, error: "El código no es válido o ya venció." }, 400);
-  return json({ ok: true, plan: d.plan, exp: d.exp });
+/** POST /api/pago/verificar { pago } -> al volver de Mercado Pago. */
+export async function verificarPago(env, request, body, json) {
+  const r = await aplicarPago(env, body?.pago);
+  if (r.error) return json({ error: r.error }, r.status);
+  const u = await currentUser(env, request);
+  const mismo = u && u.id === r.usuarioId;
+  return json({ estado: r.estado, mensaje: r.mensaje, usuario: mismo ? publicUser(u) : undefined, otraCuenta: !!u && !mismo });
+}
+
+/** POST /api/pago/aviso: notificación automática de Mercado Pago (webhook). */
+export async function avisoPago(env, request) {
+  const url = new URL(request.url);
+  let body = {};
+  try { body = await request.json(); } catch { /* algunos avisos vienen solo en la URL */ }
+  const tipo = body.type || body.topic || url.searchParams.get("type") || url.searchParams.get("topic");
+  const id = body.data?.id || url.searchParams.get("data.id") || url.searchParams.get("id");
+  if (tipo !== "payment" || !id) return new Response("ok");
+  const r = await aplicarPago(env, id);
+  // 5xx hace que Mercado Pago reintente más tarde
+  return new Response(r.error && r.status >= 500 ? "retry" : "ok", { status: r.error && r.status >= 500 ? 503 : 200 });
 }

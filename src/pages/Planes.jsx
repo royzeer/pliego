@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon";
 import { TopBar } from "../components/Layout";
 import { FREE_LIMITS, PRO_LIMITS } from "../data/tools";
-import { usePro, startPayment, activateFromCode, removePro, PLAN_NAMES, formatDate } from "../lib/pro";
+import { usePro, useUser, startPayment, PLAN_NAMES, formatDate } from "../lib/pro";
 
 const n = (x) => x.toLocaleString("es-CO");
 
@@ -30,11 +30,17 @@ const ROWS = [
 ];
 
 function BuyButton({ plan, invert, children }) {
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const buy = async () => {
     setBusy(true); setError("");
-    try { await startPayment(plan); } catch (e) { setError(e.message); setBusy(false); }
+    try {
+      await startPayment(plan);
+    } catch (e) {
+      if (e.data?.cuenta) return navigate(`/cuenta?modo=crear&plan=${plan}`);
+      setError(e.message); setBusy(false);
+    }
   };
   return (
     <div style={{ marginTop: "auto", display: "grid", gap: 8 }}>
@@ -46,52 +52,9 @@ function BuyButton({ plan, invert, children }) {
   );
 }
 
-function CodeForm() {
-  const [code, setCode] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState("");
-  const submit = async (e) => {
-    e.preventDefault();
-    if (!code.trim()) return;
-    setBusy(true); setMsg("");
-    try { await activateFromCode(code); setCode(""); } catch (err) { setMsg(err.message); }
-    setBusy(false);
-  };
-  return (
-    <form onSubmit={submit} className="field" style={{ gap: 8 }}>
-      <label>¿Ya pagaste? Activa Pro en este dispositivo con tu código</label>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <input className="input" style={{ flex: "1 1 260px" }} value={code} onChange={(e) => setCode(e.target.value)} placeholder="Pega aquí tu código de activación" />
-        <button className="btn btn-primary" disabled={busy || !code.trim()}>{busy ? "Activando…" : "Activar"}</button>
-      </div>
-      {msg && <span className="small" style={{ color: "var(--error)" }}>{msg}</span>}
-    </form>
-  );
-}
-
-export function ProStatus({ pro }) {
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    try { await navigator.clipboard.writeText(pro.codigo); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* sin portapapeles */ }
-  };
-  return (
-    <section className="card card-invert pro-status">
-      <div className="card-head" style={{ marginBottom: 6 }}>
-        <h2><Icon name="IconCrown" size={18} /> Tienes {PLAN_NAMES[pro.plan] || "Pro"}</h2>
-        <span className="small" style={{ opacity: 0.7 }}>Activo hasta el {formatDate(pro.exp)}</span>
-      </div>
-      <p className="small" style={{ opacity: 0.75 }}>Tu código de activación sirve para activar Pro en tu otro celular o computador. Guárdalo en un lugar seguro y no lo compartas.</p>
-      <div className="pro-code">{pro.codigo}</div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button className="btn" style={{ background: "var(--invert-text)", color: "var(--invert-bg)" }} onClick={copy}><Icon name="IconCopy" size={16} /> {copied ? "Copiado" : "Copiar código"}</button>
-        <button className="btn" style={{ background: "transparent", color: "inherit", borderColor: "currentColor" }} onClick={() => { if (confirm("¿Quitar Pro de este dispositivo? Puedes volver a activarlo con tu código.")) removePro(); }}>Quitar de este dispositivo</button>
-      </div>
-    </section>
-  );
-}
-
 export default function Planes() {
   const pro = usePro();
+  const user = useUser();
   const [params] = useSearchParams();
   useEffect(() => { document.title = "Planes — Pliego"; }, []);
   const rejected = params.get("pago") === "rechazado";
@@ -100,7 +63,14 @@ export default function Planes() {
     <>
       <TopBar title="Planes" subtitle="Usa Pliego gratis sin límite de usos. Pro es para archivos grandes, documentos largos y sin anuncios." />
       {rejected && <div className="alert alert-error">El pago no se completó y no se te cobró nada. Puedes intentarlo de nuevo con otro medio de pago.</div>}
-      {pro && <ProStatus pro={pro} />}
+      {pro && (
+        <section className="card card-invert pro-status">
+          <div className="card-head" style={{ marginBottom: 0 }}>
+            <h2><Icon name="IconCrown" size={18} /> Tienes {PLAN_NAMES[pro.plan] || "Pro"}</h2>
+            <span className="small" style={{ opacity: 0.7 }}>Activo hasta el {formatDate(pro.hasta)}. Si compras otro plan, los días se suman.</span>
+          </div>
+        </section>
+      )}
       <div className="plans">
         <section className="card plan">
           <h2 style={{ fontSize: 18 }}>Gratis</h2>
@@ -145,9 +115,9 @@ export default function Planes() {
       <section className="card">
         <div className="stack" style={{ gap: 14 }}>
           <p className="small muted">
-            Pagas una sola vez con Mercado Pago: tarjeta, PSE y los demás medios que Mercado Pago tenga disponibles. No es una suscripción y no se renueva sola. Al terminar el pago recibes un código de activación para usar Pro también en tu otro celular o computador.
+            Pagas una sola vez con Mercado Pago: tarjeta, PSE y los demás medios que Mercado Pago tenga disponibles. No es una suscripción y no se renueva sola. Pro queda en tu cuenta de Pliego: entras con tu correo en cualquier celular o computador y lo tienes.
           </p>
-          {!pro && <CodeForm />}
+          {!user && <p className="small muted">Para comprar necesitas una cuenta. <Link to="/cuenta?modo=crear" style={{ textDecoration: "underline" }}>Crea tu cuenta</Link> o <Link to="/cuenta" style={{ textDecoration: "underline" }}>entra</Link>.</p>}
         </div>
       </section>
 

@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon";
 import { TopBar } from "../components/Layout";
-import { activateFromPayment, usePro } from "../lib/pro";
-import { ProStatus } from "./Planes";
+import { confirmPayment, usePro, PLAN_NAMES, formatDate } from "../lib/pro";
 
 // Mercado Pago devuelve aquí a la persona después de pagar, con ?payment_id=...&status=...
 export default function Activar() {
@@ -17,8 +16,8 @@ export default function Activar() {
   useEffect(() => {
     if (!pago || started.current) return;
     started.current = true;
-    activateFromPayment(pago)
-      .then((d) => setState(d.estado === "aprobado" ? { step: "ok" } : { step: "pending", msg: d.mensaje }))
+    confirmPayment(pago)
+      .then((d) => setState(d.estado === "aprobado" ? { step: d.otraCuenta ? "other" : "ok" } : { step: "pending", msg: d.mensaje }))
       .catch((e) => setState({ step: "error", msg: e.message }));
   }, [pago]);
 
@@ -26,20 +25,25 @@ export default function Activar() {
     <>
       <TopBar title="Activar Pliego Pro" subtitle="Confirmamos tu pago con Mercado Pago" />
       {state.step === "checking" && <div className="card muted">Confirmando tu pago con Mercado Pago…</div>}
-      {state.step === "ok" && pro && (
-        <>
-          <section className="card">
-            <h2 style={{ fontSize: 20, marginBottom: 6 }}>Gracias por tu compra</h2>
-            <p className="muted">Pliego Pro ya está activo en este dispositivo. Copia tu código de activación y guárdalo: con él activas Pro en tu otro celular o computador desde la página de Planes.</p>
-          </section>
-          <ProStatus pro={pro} />
-          <Link to="/herramientas" className="btn btn-primary" style={{ justifySelf: "start" }}><Icon name="IconLayoutGrid" size={16} /> Ir a las herramientas</Link>
-        </>
+      {state.step === "ok" && (
+        <section className={`card ${pro ? "card-invert" : ""} pro-status`}>
+          <h2 style={{ marginBottom: 6 }}><Icon name="IconCrown" size={18} /> Gracias por tu compra</h2>
+          <p className="small" style={{ opacity: 0.8 }}>
+            {pro ? `Ya tienes ${PLAN_NAMES[pro.plan] || "Pro"} hasta el ${formatDate(pro.hasta)}. Entra con tu correo en cualquier celular o computador y lo tienes.` : "Tu pago quedó aplicado a tu cuenta. Entra con tu correo para usar Pro."}
+          </p>
+          <Link to="/herramientas" className="btn" style={{ marginTop: 12, background: "var(--invert-text)", color: "var(--invert-bg)" }}><Icon name="IconLayoutGrid" size={16} /> Ir a las herramientas</Link>
+        </section>
+      )}
+      {state.step === "other" && (
+        <section className="card">
+          <h2 style={{ fontSize: 20, marginBottom: 6 }}>Pago aplicado a otra cuenta</h2>
+          <p className="muted">El pago está aprobado, pero corresponde a otra cuenta de Pliego, no a la que tiene la sesión abierta en este navegador. Cierra sesión y entra con el correo con el que compraste.</p>
+        </section>
       )}
       {state.step === "pending" && (
         <section className="card">
           <h2 style={{ fontSize: 20, marginBottom: 6 }}>Tu pago está en proceso</h2>
-          <p className="muted">{state.msg} Guarda esta página o vuelve a abrir el enlace del correo de Mercado Pago cuando te confirmen el pago.</p>
+          <p className="muted">{state.msg}</p>
         </section>
       )}
       {state.step === "error" && (
@@ -51,7 +55,7 @@ export default function Activar() {
       )}
       {state.step === "none" && (
         <section className="card">
-          <p className="muted">Esta página se abre sola cuando terminas de pagar en Mercado Pago. Si ya tienes un código de activación, actívalo en <Link to="/planes" style={{ textDecoration: "underline" }}>Planes</Link>.</p>
+          <p className="muted">Esta página se abre sola cuando terminas de pagar en Mercado Pago. Si pagaste y Pro no aparece, revisa el pago desde <Link to="/cuenta" style={{ textDecoration: "underline" }}>Mi cuenta</Link>.</p>
         </section>
       )}
     </>

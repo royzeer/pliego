@@ -1,81 +1,164 @@
-// Estado de Pliego Pro en este navegador.
-// El código de activación lo firma el Worker; aquí solo se guarda y se vuelve a comprobar cada día.
+// Cuenta de Pliego y estado de Pro en el navegador.
+// La sesión vive en una cookie segura que maneja el servidor; aquí se guarda una copia del
+// usuario (correo y vencimiento de Pro) para mostrar la página rápido y funcionar sin internet.
 import { useEffect, useState } from "react";
 import { FREE_LIMITS, PRO_LIMITS } from "../data/tools";
 
-const KEY = "pliego.pro";
-const DAY = 24 * 60 * 60 * 1000;
+const KEY = "pliego.cuenta";
+const SIG_KEY = "pliego.firmas";
+const CLIENT_KEY = "pliego.clientes";
 const listeners = new Set();
 
-function read() {
-  try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch { return null; }
-}
-function write(v) {
-  try { v ? localStorage.setItem(KEY, JSON.stringify(v)) : localStorage.removeItem(KEY); } catch { /* sin almacenamiento */ }
+const readJSON = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k)) ?? fallback; } catch { return fallback; } };
+const writeJSON = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch { /* sin almacenamiento */ } };
+
+let user = readJSON(KEY, null);
+let checked = false;
+
+function setUser(u) {
+  user = u ? { correo: u.correo, creado: u.creado, pro: u.pro } : null;
+  writeJSON(KEY, user);
+  // Al entrar con Pro, traer las firmas y clientes guardados en la cuenta
+  if (u?.pro && u.datos) {
+    if (Array.isArray(u.datos.firmas) && u.datos.firmas.length) writeJSON(SIG_KEY, u.datos.firmas);
+    if (Array.isArray(u.datos.clientes) && u.datos.clientes.length) writeJSON(CLIENT_KEY, u.datos.clientes);
+    window.dispatchEvent(new Event("pliego-firmas"));
+  }
   listeners.forEach((fn) => fn());
 }
 
-/** { codigo, plan, exp } si Pro está activo en este navegador; si no, null. */
-export function getPro() {
-  const p = read();
-  return p && p.exp > Date.now() ? p : null;
-}
+// ------------------------------------------------------------ estado
+export const getUser = () => user;
+/** { plan, hasta } si la cuenta tiene Pro vigente; si no, null. */
+export const getPro = () => (user?.pro && user.pro.hasta > Date.now() ? user.pro : null);
 export const isPro = () => !!getPro();
 export const getLimits = () => (isPro() ? PRO_LIMITS : FREE_LIMITS);
 
-export function usePro() {
-  const [pro, setPro] = useState(getPro);
+function useStore(select) {
+  const [v, setV] = useState(select);
   useEffect(() => {
-    const fn = () => setPro(getPro());
+    const fn = () => setV(select());
     listeners.add(fn);
     return () => listeners.delete(fn);
-  }, []);
-  return pro;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  return v;
 }
+export const usePro = () => useStore(getPro);
+export const useUser = () => useStore(getUser);
 
-async function api(path, body) {
-  const res = await fetch(path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+// ------------------------------------------------------------ API
+async function api(path, body = {}) {
+  let res;
+  try {
+    res = await fetch(path, { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  } catch {
+    throw new Error("No pudimos conectar con Pliego. Revisa tu internet e intenta de nuevo.");
+  }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "No pudimos conectar con Pliego. Revisa tu internet e intenta de nuevo.");
+  if (!res.ok) {
+    const err = new Error(data.error || "Algo salió mal. Intenta de nuevo.");
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
   return data;
 }
 
-/** Abre Mercado Pago para pagar el plan. */
+/**
+ * La contraseña no viaja tal cual: el navegador la convierte en una clave con PBKDF2.
+ * El servidor guarda solo un HMAC de esa clave con una sal propia de cada cuenta.
+ */
+async function deriveKey(correo, clave) {
+  const enc = new TextEncoder();
+  const base = await crypto.subtle.importKey("raw", enc.encode(clave), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode(`pliego.lat:${correo.trim().toLowerCase()}`), iterations: 200000 }, base, 256);
+  return [...new Uint8Array(bits)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export function checkPassword(clave) {
+  if (clave.length < 8) return "La contraseña debe tener al menos 8 caracteres.";
+  if (clave.length > 200) return "La contraseña es demasiado larga.";
+  return "";
+}
+
+/** Pregunta al servidor quién tiene la sesión abierta (una vez por visita). */
+export async function refreshUser(force = false) {
+  if (checked && !force) return user;
+  try {
+    const d = await api("/api/cuenta/yo");
+    checked = true;
+    setUser(d.usuario);
+  } catch (e) {
+    // Si las cuentas no están activas (503) o no hay internet, se conserva lo que había
+    if (e.status && e.status < 500) setUser(null);
+  }
+  return user;
+}
+
+export async function register(correo, clave) {
+  const d = await api("/api/cuenta/registro", { correo, clave: await deriveKey(correo, clave) });
+  setUser(d.usuario);
+  return d.usuario;
+}
+
+export async function login(correo, clave) {
+  const d = await api("/api/cuenta/entrar", { correo, clave: await deriveKey(correo, clave) });
+  setUser(d.usuario);
+  return d.usuario;
+}
+
+export async function logout() {
+  try { await api("/api/cuenta/salir"); } catch { /* igual se cierra aquí */ }
+  writeJSON(SIG_KEY, null);
+  writeJSON(CLIENT_KEY, null);
+  setUser(null);
+}
+
+export const forgotPassword = (correo) => api("/api/cuenta/olvide", { correo });
+
+export async function resetPassword(token, correo, clave) {
+  const d = await api("/api/cuenta/restablecer", { token, correo, clave: await deriveKey(correo, clave) });
+  setUser(d.usuario);
+  return d.usuario;
+}
+
+export async function deleteAccount(clave) {
+  await api("/api/cuenta/borrar", { clave: await deriveKey(user.correo, clave) });
+  writeJSON(SIG_KEY, null);
+  writeJSON(CLIENT_KEY, null);
+  setUser(null);
+}
+
+// ------------------------------------------------------------ datos guardados (Pro)
+let syncTimer;
+/** Guarda firmas y clientes en este navegador y, si hay Pro, también en la cuenta. */
+export function saveProData(key, value) {
+  writeJSON(key, value);
+  if (!isPro()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => {
+    api("/api/cuenta/datos", { firmas: readJSON(SIG_KEY, []), clientes: readJSON(CLIENT_KEY, []) }).catch(() => { /* se reintenta en el próximo cambio */ });
+  }, 800);
+}
+export const readProData = (key) => readJSON(key, []);
+export const KEYS = { firmas: SIG_KEY, clientes: CLIENT_KEY };
+
+// ------------------------------------------------------------ pagos
+/** Abre Mercado Pago para pagar el plan. Si no hay sesión, lanza un error con cuenta = true. */
 export async function startPayment(plan) {
   const { url } = await api("/api/pago/crear", { plan });
   window.location.href = url;
 }
 
-/** Confirma un pago con Mercado Pago (a través del Worker) y activa Pro. */
-export async function activateFromPayment(pago) {
-  const data = await api("/api/pago/verificar", { pago });
-  if (data.estado === "aprobado") write({ codigo: data.codigo, plan: data.plan, exp: data.exp, checked: Date.now() });
-  return data;
+/** Al volver de Mercado Pago: confirma el pago y actualiza la cuenta. */
+export async function confirmPayment(pago) {
+  const d = await api("/api/pago/verificar", { pago });
+  if (d.usuario) setUser(d.usuario);
+  else await refreshUser(true);
+  return d;
 }
 
-/** Activa Pro con un código que la persona ya tiene (por ejemplo, en otro dispositivo). */
-export async function activateFromCode(codigo) {
-  const clean = String(codigo || "").trim();
-  const data = await api("/api/pro/verificar", { codigo: clean });
-  write({ codigo: clean, plan: data.plan, exp: data.exp, checked: Date.now() });
-  return data;
-}
-
-export const removePro = () => write(null);
-
-/** Una vez al día comprueba que el código guardado siga siendo válido. */
-export async function recheckPro() {
-  const p = read();
-  if (!p) return;
-  if (p.exp <= Date.now()) return write(null);
-  if (p.checked && Date.now() - p.checked < DAY) return;
-  try {
-    const res = await fetch("/api/pro/verificar", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ codigo: p.codigo }) });
-    if (res.status === 400) return write(null);
-    if (res.ok) write({ ...p, checked: Date.now() });
-  } catch { /* sin internet: se vuelve a intentar después */ }
-}
-
+// ------------------------------------------------------------ textos
 export const PLAN_NAMES = { mensual: "Pro mensual", anual: "Pro anual" };
 export const formatDate = (ms) => new Date(ms).toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
 
