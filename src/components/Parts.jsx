@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 import { formatSize } from "../lib/files";
 import { ENGINE_LABEL, FREE_LIMITS } from "../data/tools";
 import { usePro } from "../lib/pro";
 import { getGuide } from "../data/guides";
 import { GUIDE_SLUGS } from "../data/guideSlugs";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { ADSENSE } from "../data/site";
 
 /** Lista de archivos que se puede reordenar arrastrando. */
 export function FileList({ files, setFiles, sortable }) {
@@ -142,19 +143,37 @@ export function ErrorBox({ message }) {
 
 /** Espacio para anuncios. Va lejos del área de trabajo y del botón de descarga (política de AdSense). */
 export function AdSlot() {
-  const client = import.meta.env.VITE_ADSENSE_CLIENT;
   const pro = usePro();
   if (pro) return null; // Pro no tiene anuncios
   return (
     <aside className="ad-slot" aria-label="Publicidad">
       <span className="ad-label">Publicidad</span>
-      {client ? (
-        <ins className="adsbygoogle" style={{ display: "block", flex: 1 }} data-ad-client={client} data-ad-slot={import.meta.env.VITE_ADSENSE_SLOT} data-ad-format="auto" data-full-width-responsive="true" />
+      {ADSENSE.client && ADSENSE.slot ? (
+        <AdUnit />
       ) : (
         <div className="faint small" style={{ flex: 1, display: "grid", placeItems: "center", textAlign: "center" }}>Espacio para anuncio</div>
       )}
     </aside>
   );
+}
+
+/** Bloque de AdSense. Se vuelve a pedir el anuncio cada vez que cambia la página. */
+function AdUnit() {
+  const { pathname } = useLocation();
+  return <AdIns key={pathname} />;
+}
+
+function AdIns() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current || ref.current.getAttribute("data-adsbygoogle-status")) return;
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch {
+      // Si el bloqueador de anuncios lo impide, la página sigue funcionando igual.
+    }
+  }, []);
+  return <ins ref={ref} className="adsbygoogle" style={{ display: "block", flex: 1 }} data-ad-client={ADSENSE.client} data-ad-slot={ADSENSE.slot} data-ad-format="auto" data-full-width-responsive="true" />;
 }
 
 export function Guide({ tool }) {

@@ -11,6 +11,13 @@ export const SITE = {
   updated: "25 de noviembre de 2026",
 };
 
+// Google AdSense. El ID de editor (ca-pub) no es secreto. El bloque (slot) se crea en AdSense cuando aprueben el sitio.
+// Si cambias el ID, cámbialo también en index.html y en public/ads.txt.
+export const ADSENSE = {
+  client: "",
+  slot: "",
+};
+
 // Páginas fijas del sitio con su título y descripción para buscadores.
 export const PAGES = [
   { path: "/", title: "Pliego — Herramientas PDF gratis para tus trámites", description: SITE.description, h1: "Tus documentos listos para cualquier trámite" },
