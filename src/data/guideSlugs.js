@@ -47,3 +47,12 @@ export const GUIDE_SLUGS = {
   "traducir-pdf": "como-traducir-un-pdf-de-ingles-a-espanol",
   "chat-pdf": "como-hacerle-preguntas-a-un-pdf-con-ia"
 };
+
+// Guías extra por herramienta (casos concretos de Colombia). El build comprueba que coincida.
+export const EXTRA_GUIDES = {
+  "liquidacion": [{ slug: "prima-de-diciembre-2026-como-calcularla", title: "Prima de diciembre 2026: cómo calcularla y hasta cuándo la deben pagar" }],
+  "derecho-de-peticion": [{ slug: "derecho-de-peticion-a-una-eps", title: "Derecho de petición a una EPS: modelo, plazos y qué hacer si no responde" }],
+  "cuenta-de-cobro": [{ slug: "cuenta-de-cobro-para-contratistas-y-seguridad-social-2026", title: "Cuenta de cobro para contratistas en 2026: qué adjuntar y cuánto pagar de seguridad social" }],
+  "unir-pdf": [{ slug: "como-unir-pdf-en-iphone-sin-aplicaciones", title: "Cómo unir PDF en iPhone sin instalar aplicaciones" }],
+  "revisor": [{ slug: "como-subir-documentos-a-una-convocatoria-sin-que-los-rechacen", title: "Cómo subir documentos a una convocatoria sin que te los rechacen" }],
+};

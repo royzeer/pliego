@@ -4,7 +4,7 @@ import { formatSize } from "../lib/files";
 import { ENGINE_LABEL, FREE_LIMITS } from "../data/tools";
 import { usePro } from "../lib/pro";
 import { getGuide } from "../data/guides";
-import { GUIDE_SLUGS } from "../data/guideSlugs";
+import { GUIDE_SLUGS, EXTRA_GUIDES } from "../data/guideSlugs";
 import { Link, useLocation } from "react-router-dom";
 import { ADSENSE } from "../data/site";
 
@@ -194,6 +194,11 @@ export function Guide({ tool }) {
           <p style={{ marginTop: 14 }}>
             <Link to={`/guias/${GUIDE_SLUGS[tool.id]}`} className="btn"><Icon name="IconBook" size={16} /> Leer la guía completa</Link>
           </p>
+        )}
+        {EXTRA_GUIDES[tool.id] && (
+          <ul style={{ marginTop: 12 }}>
+            {EXTRA_GUIDES[tool.id].map((x) => <li key={x.slug}><Link to={`/guias/${x.slug}`}>{x.title}</Link></li>)}
+          </ul>
         )}
         <div className="faq" style={{ marginTop: 18 }}>
           {(g?.faqs || []).map(([q, a]) => (

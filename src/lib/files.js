@@ -24,6 +24,8 @@ export const downloadBlob = (blob, name) => {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
+  // Avisa a la página que hubo una descarga (para el aviso de compartir)
+  try { window.dispatchEvent(new CustomEvent("pliego-descarga", { detail: { name } })); } catch { /* sin eventos */ }
 };
 
 export const zipBlob = async (entries) => {

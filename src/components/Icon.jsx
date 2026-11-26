@@ -80,6 +80,8 @@ import {
   IconUpload,
   IconWorldWww,
   IconX,
+  IconBrandWhatsapp,
+  IconShare,
 } from "@tabler/icons-react";
 
 const MAP = {
@@ -163,6 +165,8 @@ const MAP = {
   IconUpload,
   IconWorldWww,
   IconX,
+  IconBrandWhatsapp,
+  IconShare,
 };
 
 export default function Icon({ name, size = 20, stroke = 1.6, ...rest }) {

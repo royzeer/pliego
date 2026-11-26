@@ -5,6 +5,7 @@ import Icon from "./Icon";
 import { TOOLS } from "../data/tools";
 import { getTheme, setTheme } from "../lib/stats";
 import { InstallBanner } from "./Install";
+import ShareNudge from "./ShareNudge";
 import { usePro, useUser } from "../lib/pro";
 
 const NAV = [
@@ -112,6 +113,7 @@ export default function Layout() {
           </Link>
           <InstallBanner />
           <Outlet />
+          <ShareNudge />
           <footer className="footer">
             <span>© {new Date().getFullYear()} Pliego · Tus archivos se procesan en tu dispositivo</span>
             <nav>

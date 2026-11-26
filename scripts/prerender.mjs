@@ -7,11 +7,16 @@ import { TOOLS, CATEGORIES } from "../src/data/tools.js";
 import { GUIDES } from "../src/data/guides.js";
 import { SITE, PAGES, BRAND, SCREENSHOTS, SCREENSHOT_SIZE } from "../src/data/site.js";
 import { ARTICLES } from "../src/data/articles/index.js";
-import { GUIDE_SLUGS } from "../src/data/guideSlugs.js";
+import { GUIDE_SLUGS, EXTRA_GUIDES } from "../src/data/guideSlugs.js";
 import { FORMATS, UNIVERSAL_PAIRS, pairCopy, pairSlug } from "../src/data/formats.js";
 
 // Comprueba que el mapa herramienta -> guía esté al día.
 for (const a of ARTICLES) {
+  if (a.extra) {
+    // guías extra: no son la guía principal, deben estar en EXTRA_GUIDES
+    if (!(EXTRA_GUIDES[a.tool] || []).some((x) => x.slug === a.slug && x.title === a.title)) throw new Error(`EXTRA_GUIDES desactualizado para ${a.slug}`);
+    continue;
+  }
   if (GUIDE_SLUGS[a.tool] !== a.slug) throw new Error(`guideSlugs.js desactualizado para ${a.tool}`);
 }
 
@@ -154,6 +159,7 @@ for (const t of TOOLS) {
     g?.steps ? `<h2>Cómo usar ${esc(t.name)}</h2><ol>${g.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : "",
     g?.faqs?.length ? `<h2>Preguntas frecuentes</h2>${g.faqs.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("")}` : "",
     GUIDE_SLUGS[t.id] ? `<p>${link(`/guias/${GUIDE_SLUGS[t.id]}`, "Leer la guía completa")}</p>` : "",
+    EXTRA_GUIDES[t.id] ? `<h2>Más guías</h2><ul>${EXTRA_GUIDES[t.id].map((x) => `<li>${link(`/guias/${x.slug}`, x.title)}</li>`).join("")}</ul>` : "",
     t.id === "convertidor" ? `<h2>Conversiones disponibles</h2><ul>${UNIVERSAL_PAIRS.map((x) => `<li>${pairLink(x)}</li>`).join("")}</ul>` : "",
     related.length ? `<h2>Herramientas relacionadas</h2>${toolList(related)}` : "",
     footer,
