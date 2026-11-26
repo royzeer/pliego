@@ -286,6 +286,10 @@
 .doc p { color: var(--text-muted); margin-bottom: 10px; line-height: 1.7; }
 .doc a { text-decoration: underline; color: var(--text); }
 .doc .btn { text-decoration: none; }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; margin: 6px 0 12px; }
+.shots figure { margin: 0; }
+.shots img { display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--border, rgba(127,127,127,.25)); }
+.shots figcaption { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
 .seo-static { padding: 24px; color: #f4f4f2; font-family: Urbanist, system-ui, sans-serif; }
 
 /* ---------- Instalar app ---------- */

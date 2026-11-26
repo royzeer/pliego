@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { TOOLS, CATEGORIES } from "../src/data/tools.js";
 import { GUIDES } from "../src/data/guides.js";
-import { SITE, PAGES } from "../src/data/site.js";
+import { SITE, PAGES, BRAND, SCREENSHOTS, SCREENSHOT_SIZE } from "../src/data/site.js";
 import { ARTICLES } from "../src/data/articles/index.js";
 import { GUIDE_SLUGS } from "../src/data/guideSlugs.js";
 import { FORMATS, UNIVERSAL_PAIRS, pairCopy, pairSlug } from "../src/data/formats.js";
@@ -34,7 +34,13 @@ function head({ title, description, url, jsonld }) {
     `<meta property="og:title" content="${esc(title)}" />`,
     `<meta property="og:description" content="${esc(description)}" />`,
     `<meta property="og:url" content="${url}" />`,
-    `<meta name="twitter:card" content="summary" />`,
+    `<meta property="og:image" content="${SITE.url}${BRAND.share.src}" />`,
+    `<meta property="og:image:width" content="${BRAND.share.width}" />`,
+    `<meta property="og:image:height" content="${BRAND.share.height}" />`,
+    `<meta property="og:image:alt" content="${esc(BRAND.share.alt)}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:image" content="${SITE.url}${BRAND.share.src}" />`,
+    `<meta name="twitter:image:alt" content="${esc(BRAND.share.alt)}" />`,
     jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script>` : "",
   ].join("\n    ");
 }
@@ -44,6 +50,7 @@ function render(route, { title, description, body, jsonld }) {
   let html = template
     .replace(/<title>[\s\S]*?<\/title>/, "")
     .replace(/<meta name="description"[^>]*>/, "")
+    .replace(/\s*<meta (property="og:|name="twitter:)[^>]*>/g, "")
     .replace("</head>", `    ${head({ title, description, url, jsonld })}\n  </head>`)
     .replace('<div id="root"></div>', `<div id="root"><div class="seo-static">${body}</div></div>`);
   const file = route === "/" ? path.join(DIST, "index.html") : path.join(DIST, `${route.slice(1)}.html`);
@@ -51,6 +58,26 @@ function render(route, { title, description, body, jsonld }) {
   fs.writeFileSync(file, html);
   return url;
 }
+
+const img = (s, w = SCREENSHOT_SIZE.width, h = SCREENSHOT_SIZE.height) => `<img src="${s.src}" alt="${esc(s.alt)}" title="${esc(s.title)}" width="${w}" height="${h}" loading="lazy" />`;
+const gallery = (list) => `<h2>Así se ve Pliego</h2>${list.map((s) => `<figure>${img(s)}<figcaption>${esc(s.title)}</figcaption></figure>`).join("")}`;
+const imgUrl = (s) => ({ loc: SITE.url + s.src, title: s.title, caption: s.alt });
+const shareImg = { loc: SITE.url + BRAND.share.src, title: "Pliego herramientas PDF", caption: BRAND.share.alt };
+const logoImg = { loc: SITE.url + BRAND.logo, title: "Logo de Pliego", caption: "Logo de Pliego, herramientas PDF gratis" };
+
+// Datos de la marca para Google: nombre, logo, imágenes y redes.
+const ORG = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": SITE.url + "/#organizacion",
+  name: SITE.name,
+  url: SITE.url + "/",
+  logo: { "@type": "ImageObject", url: SITE.url + BRAND.logo, width: 1000, height: 446 },
+  image: SITE.url + BRAND.share.src,
+  email: SITE.email,
+  description: SITE.description,
+  sameAs: [BRAND.instagram],
+};
 
 const toolList = (tools) => `<ul>${tools.map((t) => `<li>${link(toolUrl(t), t.name)}: ${esc(t.desc)}</li>`).join("")}</ul>`;
 const nav = `<p>${link("/", "Inicio")} · ${link("/herramientas", "Herramientas")} · ${link("/tramites", "Trámites")} · ${link("/guias", "Guías")} · ${link("/planes", "Planes")}</p>`;
@@ -75,10 +102,38 @@ for (const p of PAGES) {
       })
       .join("");
   }
+  let images = [];
+  if (p.path === "/") {
+    extra = `<p>${img(BRAND.share, BRAND.share.width, BRAND.share.height)}</p>` + extra;
+    images = [shareImg, logoImg, ...SCREENSHOTS.map(imgUrl)];
+  }
+  if (p.path === "/acerca") {
+    extra = gallery(SCREENSHOTS);
+    images = SCREENSHOTS.map(imgUrl);
+  }
   const jsonld = p.path === "/"
-    ? { "@context": "https://schema.org", "@type": "WebSite", name: SITE.name, url: SITE.url + "/", description: SITE.description, inLanguage: "es" }
-    : undefined;
-  urls.push({ url: render(p.path, { title: p.title, description: p.description, jsonld, body: `${nav}<h1>${esc(p.h1)}</h1><p>${esc(p.description)}</p>${extra}${footer}` }), priority: p.path === "/" ? "1.0" : "0.6" });
+    ? [
+        ORG,
+        { "@context": "https://schema.org", "@type": "WebSite", name: SITE.name, alternateName: "Pliego herramientas PDF", url: SITE.url + "/", description: SITE.description, inLanguage: "es", publisher: { "@id": ORG["@id"] } },
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Pliego — Herramientas PDF",
+          url: SITE.url + "/",
+          applicationCategory: "UtilitiesApplication",
+          operatingSystem: "Android, iOS, Windows, macOS (navegador web)",
+          inLanguage: "es",
+          image: SITE.url + BRAND.share.src,
+          screenshot: SCREENSHOTS.map((x) => ({ "@type": "ImageObject", url: SITE.url + x.src, caption: x.alt })),
+          offers: { "@type": "Offer", price: "0", priceCurrency: "COP" },
+          publisher: { "@id": ORG["@id"] },
+          description: SITE.description,
+        },
+      ]
+    : p.path === "/acerca"
+      ? [ORG]
+      : undefined;
+  urls.push({ url: render(p.path, { title: p.title, description: p.description, jsonld, body: `${nav}<h1>${esc(p.h1)}</h1><p>${esc(p.description)}</p>${extra}${footer}` }), priority: p.path === "/" ? "1.0" : "0.6", images });
 }
 
 const pairLink = ([f, t]) => link(`/convertir/${pairSlug(f, t)}`, `${FORMATS[f].name} a ${FORMATS[t].name}`);
@@ -87,11 +142,13 @@ const pairLink = ([f, t]) => link(`/convertir/${pairSlug(f, t)}`, `${FORMATS[f].
 for (const t of TOOLS) {
   const g = GUIDES[t.id];
   const related = TOOLS.filter((x) => x.cat === t.cat && x.id !== t.id && x.status === "listo").slice(0, 6);
+  const shot = SCREENSHOTS.find((x) => x.tool === t.id);
   const description = g?.intro ? g.intro.slice(0, 155).replace(/\s+\S*$/, "") + "…" : `${t.desc} Gratis, sin registro y sin límite de usos.`;
   const body = [
     nav,
     `<h1>${esc(t.name)} gratis y sin límite</h1>`,
     `<p>${esc(t.desc)}</p>`,
+    shot ? `<p>${img(shot)}</p>` : "",
     t.status === "pronto" ? "<p>Esta herramienta llega pronto.</p>" : "",
     g?.intro ? `<p>${esc(g.intro)}</p>` : "",
     g?.steps ? `<h2>Cómo usar ${esc(t.name)}</h2><ol>${g.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : "",
@@ -112,6 +169,8 @@ for (const t of TOOLS) {
       inLanguage: "es",
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       description: t.desc,
+      ...(shot ? { screenshot: SITE.url + shot.src } : {}),
+      publisher: { "@id": ORG["@id"] },
     },
   ];
   if (g?.faqs?.length) {
@@ -121,7 +180,7 @@ for (const t of TOOLS) {
       mainEntity: g.faqs.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
     });
   }
-  urls.push({ url: render(toolUrl(t), { title: `${t.name} gratis y sin límite — ${SITE.name}`, description, body, jsonld }), priority: t.status === "listo" ? "0.8" : "0.3" });
+  urls.push({ url: render(toolUrl(t), { title: `${t.name} gratis y sin límite — ${SITE.name}`, description, body, jsonld }), priority: t.status === "listo" ? "0.8" : "0.3", images: shot ? [imgUrl(shot)] : [] });
 }
 
 // Una página por cada combinación del convertidor universal
@@ -175,7 +234,8 @@ for (const a of ARTICLES) {
       mainEntityOfPage: url,
       dateModified: today,
       author: { "@type": "Person", name: SITE.owner },
-      publisher: { "@type": "Organization", name: SITE.name, url: SITE.url + "/" },
+      image: SITE.url + BRAND.share.src,
+      publisher: { "@type": "Organization", name: SITE.name, url: SITE.url + "/", logo: { "@type": "ImageObject", url: SITE.url + BRAND.logo } },
     },
     {
       "@context": "https://schema.org",
@@ -199,8 +259,8 @@ for (const a of ARTICLES) {
 
 // Sitemap y robots
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${u.url}</loc><lastmod>${today}</lastmod><priority>${u.priority}</priority></url>`).join("\n")}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${urls.map((u) => `  <url><loc>${u.url}</loc><lastmod>${today}</lastmod><priority>${u.priority}</priority>${(u.images || []).map((i) => `<image:image><image:loc>${i.loc}</image:loc></image:image>`).join("")}</url>`).join("\n")}
 </urlset>
 `;
 fs.writeFileSync(path.join(DIST, "sitemap.xml"), sitemap);

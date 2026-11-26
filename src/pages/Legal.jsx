@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { TopBar } from "../components/Layout";
-import { SITE, PAGES } from "../data/site";
+import { SITE, PAGES, SCREENSHOTS, SCREENSHOT_SIZE } from "../data/site";
 
 const usePage = (path) => {
   const page = PAGES.find((p) => p.path === path);
@@ -23,6 +23,15 @@ export function Acerca() {
         <p>Pliego es una página de herramientas PDF gratis y sin límite de usos, pensada para los trámites del día a día en Colombia y Latinoamérica: subir la cédula por ambas caras, dejar un PDF por debajo de 2 MB, armar el paquete de una hoja de vida o revisar un archivo antes de subirlo a una plataforma.</p>
         <h2>Tus archivos se quedan contigo</h2>
         <p>Casi todas las herramientas funcionan dentro de tu navegador. Eso quiere decir que tus documentos no se suben a ningún servidor: se procesan en tu celular o computador y el resultado se descarga directo. Por eso Pliego puede ser gratis e ilimitado.</p>
+        <h2>Así se ve Pliego</h2>
+        <div className="shots">
+          {SCREENSHOTS.map((s) => (
+            <figure key={s.src}>
+              <img src={s.src} alt={s.alt} title={s.title} width={SCREENSHOT_SIZE.width} height={SCREENSHOT_SIZE.height} loading="lazy" />
+              <figcaption>{s.tool ? <Link to={`/herramientas/${s.tool}`}>{s.title}</Link> : s.title}</figcaption>
+            </figure>
+          ))}
+        </div>
         <h2>Quién lo hace</h2>
         <p>Pliego lo crea {SITE.owner}, desarrollador web en {SITE.city}. Si tienes una idea de herramienta o encontraste un error, <Link to="/contacto">escríbenos</Link>.</p>
         <h2>Aviso</h2>

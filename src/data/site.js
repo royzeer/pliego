@@ -11,6 +11,24 @@ export const SITE = {
   updated: "25 de noviembre de 2026",
 };
 
+// Imágenes propias de Pliego (carpeta public/imagenes). Sirven para Google Imágenes,
+// para la vista previa al compartir un enlace y para la galería de "Acerca de".
+export const BRAND = {
+  logo: "/imagenes/pliego-logo.png",
+  icon: "/imagenes/pliego-icono.png",
+  share: { src: "/imagenes/pliego-herramientas-pdf-gratis.jpg", width: 1200, height: 630, alt: "Pliego, herramientas PDF gratis para tus trámites en Colombia" },
+  instagram: "https://www.instagram.com/pliego.lat/",
+};
+
+export const SCREENSHOTS = [
+  { src: "/imagenes/pliego-herramientas-pdf-inicio.jpg", title: "Inicio de Pliego", alt: "Pliego herramientas PDF: pantalla de inicio de la app en el celular", tool: null },
+  { src: "/imagenes/pliego-herramientas-pdf-lista.jpg", title: "Las 47 herramientas PDF", alt: "Pliego herramientas PDF: lista de herramientas para trámites, unir, comprimir y convertir", tool: null },
+  { src: "/imagenes/pliego-unir-pdf.jpg", title: "Unir PDF", alt: "Pliego herramientas PDF: unir varios PDF en uno gratis", tool: "unir-pdf" },
+  { src: "/imagenes/pliego-comprimir-pdf-peso-exacto.jpg", title: "Comprimir PDF a peso exacto", alt: "Pliego herramientas PDF: comprimir un PDF a 1 MB o 2 MB exactos", tool: "comprimir-a-peso" },
+  { src: "/imagenes/pliego-cedula-ambas-caras-pdf.jpg", title: "Cédula por ambas caras", alt: "Pliego herramientas PDF: cédula por ambas caras en una sola hoja", tool: "cedula-ambas-caras" },
+];
+export const SCREENSHOT_SIZE = { width: 780, height: 1688 };
+
 // Google AdSense. El ID de editor (ca-pub) no es secreto. El bloque (slot) se crea en AdSense cuando aprueben el sitio.
 // Si cambias el ID, cámbialo también en index.html y en public/ads.txt.
 export const ADSENSE = {
