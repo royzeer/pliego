@@ -8,6 +8,7 @@ import { GUIDES } from "../src/data/guides.js";
 import { SITE, PAGES } from "../src/data/site.js";
 import { ARTICLES } from "../src/data/articles/index.js";
 import { GUIDE_SLUGS } from "../src/data/guideSlugs.js";
+import { FORMATS, UNIVERSAL_PAIRS, pairCopy, pairSlug } from "../src/data/formats.js";
 
 // Comprueba que el mapa herramienta -> guía esté al día.
 for (const a of ARTICLES) {
@@ -80,6 +81,8 @@ for (const p of PAGES) {
   urls.push({ url: render(p.path, { title: p.title, description: p.description, jsonld, body: `${nav}<h1>${esc(p.h1)}</h1><p>${esc(p.description)}</p>${extra}${footer}` }), priority: p.path === "/" ? "1.0" : "0.6" });
 }
 
+const pairLink = ([f, t]) => link(`/convertir/${pairSlug(f, t)}`, `${FORMATS[f].name} a ${FORMATS[t].name}`);
+
 // Una página por herramienta
 for (const t of TOOLS) {
   const g = GUIDES[t.id];
@@ -94,6 +97,7 @@ for (const t of TOOLS) {
     g?.steps ? `<h2>Cómo usar ${esc(t.name)}</h2><ol>${g.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : "",
     g?.faqs?.length ? `<h2>Preguntas frecuentes</h2>${g.faqs.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("")}` : "",
     GUIDE_SLUGS[t.id] ? `<p>${link(`/guias/${GUIDE_SLUGS[t.id]}`, "Leer la guía completa")}</p>` : "",
+    t.id === "convertidor" ? `<h2>Conversiones disponibles</h2><ul>${UNIVERSAL_PAIRS.map((x) => `<li>${pairLink(x)}</li>`).join("")}</ul>` : "",
     related.length ? `<h2>Herramientas relacionadas</h2>${toolList(related)}` : "",
     footer,
   ].join("");
@@ -118,6 +122,27 @@ for (const t of TOOLS) {
     });
   }
   urls.push({ url: render(toolUrl(t), { title: `${t.name} gratis y sin límite — ${SITE.name}`, description, body, jsonld }), priority: t.status === "listo" ? "0.8" : "0.3" });
+}
+
+// Una página por cada combinación del convertidor universal
+for (const [from, to] of UNIVERSAL_PAIRS) {
+  const c = pairCopy(from, to);
+  const route = `/convertir/${pairSlug(from, to)}`;
+  const others = UNIVERSAL_PAIRS.filter(([f, t]) => (f === from || t === to) && !(f === from && t === to)).slice(0, 10);
+  const body = [
+    nav,
+    `<h1>${esc(c.title)}</h1>`,
+    `<p>${esc(c.intro)}</p>`,
+    `<h2>Cómo convertir ${esc(FORMATS[from].name)} a ${esc(FORMATS[to].name)}</h2><ol>${c.steps.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>`,
+    `<h2>Preguntas frecuentes</h2>${c.faqs.map(([q, r]) => `<h3>${esc(q)}</h3><p>${esc(r)}</p>`).join("")}`,
+    `<h2>Otras conversiones</h2><ul>${others.map((x) => `<li>${pairLink(x)}</li>`).join("")}</ul>`,
+    footer,
+  ].join("");
+  const jsonld = [
+    { "@context": "https://schema.org", "@type": "WebApplication", name: `${c.title} — ${SITE.name}`, url: `${SITE.url}${route}`, applicationCategory: "UtilitiesApplication", operatingSystem: "Cualquiera (navegador web)", inLanguage: "es", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: c.description },
+    { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: c.faqs.map(([q, r]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: r } })) },
+  ];
+  urls.push({ url: render(route, { title: `${c.title} — ${SITE.name}`, description: c.description, body, jsonld }), priority: "0.6" });
 }
 
 // Una página por guía

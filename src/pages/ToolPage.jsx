@@ -9,8 +9,10 @@ import { CUSTOM as BASE_CUSTOM } from "../tools/CustomTools";
 import { EDIT_TOOLS } from "../tools/EditTools";
 import { DOC_TOOLS } from "../tools/DocTools";
 import { AI_TOOLS } from "../tools/AiTools";
+import { UniversalCatalogTool, FormatBar } from "../tools/Universal";
+import { TOOL_PAIR } from "../data/formats";
 
-const CUSTOM = { ...BASE_CUSTOM, ...EDIT_TOOLS, ...DOC_TOOLS, ...AI_TOOLS };
+const CUSTOM = { ...BASE_CUSTOM, ...EDIT_TOOLS, ...DOC_TOOLS, ...AI_TOOLS, convertidor: UniversalCatalogTool };
 import GenericTool from "../tools/GenericTool";
 import NotFound from "./NotFound";
 
@@ -47,6 +49,7 @@ export default function ToolPage() {
         <Link to="/herramientas" className="icon-btn" aria-label="Volver a herramientas"><Icon name="IconArrowLeft" size={18} /></Link>
         <TopBar title={tool.name} subtitle={tool.desc} />
       </div>
+      {TOOL_PAIR[id] && <FormatBar from={TOOL_PAIR[id][0]} to={TOOL_PAIR[id][1]} />}
       {ready ? (Custom ? <Custom tool={tool} /> : <GenericTool key={id} tool={tool} config={config} />) : <ComingSoon tool={tool} />}
       <Guide tool={tool} />
     </>

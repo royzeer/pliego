@@ -241,6 +241,14 @@ export const GUIDES = {
     steps: ["Sube tu PDF.", "Escribe tu pregunta o toca una de las sugeridas.", "Sigue preguntando lo que necesites."],
     faqs: [["¿Puede inventar respuestas?", "Le pedimos que responda solo con lo que dice el documento, pero la IA puede equivocarse. Verifica los datos importantes en el PDF."]],
   },
+  convertidor: {
+    intro: "Convierte entre los formatos más usados sin buscar una herramienta para cada caso: PDF, Word, Excel, CSV, PowerPoint, imagen, HTML, Markdown y texto. Eliges De y A, y con el botón del medio volteas la conversión.",
+    steps: ["Elige el formato de origen en De y el de destino en A.", "Si quieres la conversión al revés, toca el botón de voltear.", "Sube tu archivo.", "Haz clic en Convertir y descarga el resultado."],
+    faqs: [
+      ["¿Qué conversiones puedo hacer?", "Por ejemplo Excel a Markdown, CSV a Excel, Word a HTML, Markdown a Word, HTML a Markdown, imagen a texto con OCR, PowerPoint a texto y muchas más. La lista A muestra los destinos posibles para cada formato."],
+      ["¿Pierdo el formato del documento?", "Se conservan títulos, párrafos, listas, negrillas y tablas. Los diseños muy elaborados, como columnas o cuadros flotantes, pueden simplificarse."],
+    ],
+  },
 };
 
 export const getGuide = (id) => GUIDES[id];

@@ -361,3 +361,10 @@
 /* Cuenta */
 .auth-card { max-width: 480px; }
 .link-btn { background: none; border: 0; padding: 0; color: var(--text); text-decoration: underline; cursor: pointer; font: inherit; }
+
+/* Barra De / A del convertidor */
+.format-bar { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: end; }
+.format-bar .field { margin: 0; }
+.swap-btn { width: 46px; height: 46px; margin-bottom: 2px; }
+.swap-btn:disabled { opacity: .35; cursor: not-allowed; }
+@media (max-width: 520px) { .format-bar { grid-template-columns: 1fr auto 1fr; gap: 8px; } }

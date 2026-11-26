@@ -48,6 +48,7 @@ export const TOOLS = [
   { id: "html-a-pdf", name: "HTML a PDF", desc: "Un archivo HTML o código HTML a PDF.", cat: "convertir-a", icon: "IconWorldWww", status: "listo", engine: "navegador" },
 
   // ---------- Convertir desde PDF ----------
+  { id: "convertidor", name: "Convertidor universal", desc: "Excel, Word, CSV, HTML, Markdown, texto e imagen: de uno a otro.", cat: "convertir-desde", icon: "IconTransform", status: "listo", engine: "navegador", exclusive: true },
   { id: "pdf-a-jpg", name: "PDF a imagen", desc: "Cada página como JPG o PNG.", cat: "convertir-desde", icon: "IconFileTypeJpg", status: "listo", engine: "navegador" },
   { id: "pdf-a-word", name: "PDF a Word", desc: "Edita tu PDF en Word.", cat: "convertir-desde", icon: "IconFileTypeDocx", status: "listo", engine: "navegador", limitFree: "50 páginas por archivo" },
   { id: "pdf-a-powerpoint", name: "PDF a PowerPoint", desc: "Cada página como diapositiva.", cat: "convertir-desde", icon: "IconFileTypePpt", status: "listo", engine: "navegador", limitFree: "50 páginas por archivo" },

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Tools from "./pages/Tools";
@@ -14,6 +14,7 @@ import { Cuenta, Restablecer } from "./pages/Cuenta";
 
 // Las herramientas cargan las librerías de PDF solo cuando se abren.
 const ToolPage = lazy(() => import("./pages/ToolPage"));
+const Convertir = lazy(() => import("./pages/Convertir"));
 const GuiasIndex = lazy(() => import("./pages/Guias").then((m) => ({ default: m.GuiasIndex })));
 const GuiaPage = lazy(() => import("./pages/Guias").then((m) => ({ default: m.GuiaPage })));
 const Loading = () => <div className="card muted">Cargando herramienta…</div>;
@@ -27,6 +28,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/herramientas" element={<Tools />} />
           <Route path="/herramientas/:id" element={<Suspense fallback={<Loading />}><ToolPage /></Suspense>} />
+          <Route path="/convertir" element={<Navigate to="/herramientas/convertidor" replace />} />
+          <Route path="/convertir/:par" element={<Suspense fallback={<Loading />}><Convertir /></Suspense>} />
           <Route path="/guias" element={<Suspense fallback={<Loading />}><GuiasIndex /></Suspense>} />
           <Route path="/guias/:slug" element={<Suspense fallback={<Loading />}><GuiaPage /></Suspense>} />
           <Route path="/tramites" element={<Tramites />} />
