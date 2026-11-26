@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, Link, Outlet, useNavigate } from "react-router-dom";
+import Logo from "./Logo";
 import Icon from "./Icon";
 import { TOOLS } from "../data/tools";
 import { getTheme, setTheme } from "../lib/stats";
@@ -91,9 +92,6 @@ export default function Layout() {
     <div className="shell">
       <div className="app">
         <nav className="rail" aria-label="Navegación principal">
-          <Link to="/" className="rail-logo" aria-label="Pliego, inicio">
-            <img src="/favicon.svg" width="40" height="40" alt="" />
-          </Link>
           <div className="rail-group">
             {NAV.map((n) => (
               <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `icon-btn${isActive ? " active" : ""}`} aria-label={n.label} title={n.label}>
@@ -109,6 +107,9 @@ export default function Layout() {
           </div>
         </nav>
         <main className="main">
+          <Link to="/" className="brand" aria-label="Pliego, inicio">
+            <Logo height={40} />
+          </Link>
           <InstallBanner />
           <Outlet />
           <footer className="footer">

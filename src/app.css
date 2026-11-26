@@ -24,7 +24,8 @@
   gap: 12px;
   padding: 16px 0;
 }
-.rail-logo { margin-bottom: 16px; }
+.brand { display: inline-flex; align-self: flex-start; color: var(--text); padding: 2px 2px 0; }
+.brand:hover { opacity: .85; }
 .rail-group {
   background: var(--surface);
   border-radius: var(--radius-pill);
@@ -262,7 +263,7 @@
     position: fixed; top: auto; bottom: 12px; left: 50%; transform: translateX(-50%);
     height: auto; width: auto; flex-direction: row; padding: 0; z-index: 30;
   }
-  .rail-logo, .rail-spacer, .rail-bottom { display: none; }
+  .rail-spacer, .rail-bottom { display: none; }
   .rail-group { flex-direction: row; }
   .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .stat-value { font-size: 22px; }
