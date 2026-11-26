@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1=".1" y1="0" x2=".9" y2="1">
+      <stop offset="0" stop-color="#3d3d42"/>
+      <stop offset=".5" stop-color="#151517"/>
+      <stop offset="1" stop-color="#060607"/>
+    </linearGradient>
+    <radialGradient id="glyph" cx=".3" cy=".22" r=".95">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".45" stop-color="#e4e4e7"/>
+      <stop offset=".8" stop-color="#a3a3a9"/>
+      <stop offset="1" stop-color="#77777d"/>
+    </radialGradient>
+    <linearGradient id="edgeLight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".95"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity=".0"/>
+    </linearGradient>
+    <linearGradient id="edgeDark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset=".55" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".55"/>
+    </linearGradient>
+    <radialGradient id="shine" cx=".25" cy=".12" r=".9">
+      <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
+      <stop offset=".55" stop-color="#fff" stop-opacity=".03"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bounce" cx=".85" cy="1" r=".6">
+      <stop offset="0" stop-color="#8a8a90" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#8a8a90" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c9c9ce"/>
+      <stop offset=".35" stop-color="#3a3a3f"/>
+      <stop offset=".75" stop-color="#0a0a0b"/>
+      <stop offset="1" stop-color="#6a6a70"/>
+    </linearGradient>
+    <filter id="drop" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="6" dy="16"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".7"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="sq"><rect x="24" y="24" width="464" height="464" rx="124"/></clipPath>
+    <path id="P" fill-rule="evenodd" d="
+      M 70 540
+      C 118 470 140 400 158 300
+      C 172 214 186 150 238 112
+      C 286 78 360 72 410 108
+      C 462 146 470 224 430 280
+      C 392 334 322 358 262 346
+      C 240 342 226 356 216 384
+      C 200 432 176 486 150 540 Z
+      M 282 160
+      C 250 160 232 182 226 214
+      C 220 250 236 280 272 284
+      C 318 288 362 262 368 222
+      C 374 184 346 158 306 158
+      C 298 158 290 159 282 160 Z"/>
+    <clipPath id="pc"><use href="#P"/></clipPath>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="124" fill="url(#bg)"/>
+  <g clip-path="url(#sq)">
+    <rect x="24" y="24" width="464" height="464" fill="url(#bounce)"/>
+    <g filter="url(#drop)"><use href="#P" fill="url(#glyph)"/></g>
+    <g clip-path="url(#pc)">
+      <use href="#P" fill="none" stroke="url(#edgeLight)" stroke-width="16"/>
+      <use href="#P" fill="none" stroke="url(#edgeDark)" stroke-width="22"/>
+    </g>
+    <rect x="24" y="24" width="464" height="464" fill="url(#shine)"/>
+  </g>
+  <rect x="25.5" y="25.5" width="461" height="461" rx="122.5" fill="none" stroke="url(#rim)" stroke-width="3"/>
+</svg>

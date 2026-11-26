@@ -1,7 +1,7 @@
 // Service worker de Pliego: permite instalar la app y usarla sin internet.
 // Estrategia "primero la red": siempre intenta traer la versión nueva y,
 // si no hay conexión, usa la copia guardada.
-const CACHE = "pliego-v1";
+const CACHE = "pliego-v2";
 
 self.addEventListener("install", () => self.skipWaiting());
 
