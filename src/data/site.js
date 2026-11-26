@@ -14,7 +14,7 @@ export const SITE = {
 // Google AdSense. El ID de editor (ca-pub) no es secreto. El bloque (slot) se crea en AdSense cuando aprueben el sitio.
 // Si cambias el ID, cámbialo también en index.html y en public/ads.txt.
 export const ADSENSE = {
-  client: "",
+  client: "ca-pub-4199707439078963",
   slot: "",
 };
 
